@@ -1,0 +1,11 @@
+botframework
+
+https://docs.botframework.com/en-us/csharp/builder/sdkreference/gettingstarted.html
+https://www.codeproject.com/Articles/1106457/An-Introduction-to-the-Microsoft-Bot-Framework
+
+Metro FrameWork For winforms
+https://thielj.github.io/MetroFramework/
+
+Wpf Design:
+http://materialdesigninxaml.net/
+
