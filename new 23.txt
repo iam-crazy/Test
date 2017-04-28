@@ -1,0 +1,266 @@
+    <Grid Margin="15" Grid.IsSharedSizeScope="True">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="33.33*"></ColumnDefinition>
+            <ColumnDefinition Width="33.33*"></ColumnDefinition>
+            <ColumnDefinition Width="33.33*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"></RowDefinition>
+            <RowDefinition Height="52"></RowDefinition>
+            <RowDefinition Height="20"></RowDefinition>
+            <RowDefinition Height="35"></RowDefinition>
+            <RowDefinition Height="50"></RowDefinition>
+            <RowDefinition Height="40"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Border
+            BorderBrush="Gray"
+            BorderThickness="1"
+            CornerRadius="0" Grid.ColumnSpan="3"
+            Background="#ffffff"
+                Grid.RowSpan="4">
+            <Border.Effect>
+                <DropShadowEffect
+                    Color="LightGray"
+                    BlurRadius="6"
+                    ShadowDepth="1"
+                    Direction="0" />
+            </Border.Effect>
+        </Border>
+        <StackPanel Grid.Row="0" Grid.ColumnSpan="3" VerticalAlignment="Top">
+            <WrapPanel Style="{StaticResource wraptitlebar}">
+                <Label Content="{x:Static re:ShortageSurplus.LBL_MaritimePlanningOverview}" x:Name="lbl" HorizontalAlignment="Left" FontSize="18" FontFamily="segoe UI" FontWeight="Normal" Foreground="White" d:LayoutOverrides="Height" />
+            </WrapPanel>
+        </StackPanel>
+        <f:Label HorizontalAlignment="Center" Header="{x:Static re:ShortageSurplus.LBL_Region}" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center">
+            <f:Label.Content>
+                <StackPanel Style="{StaticResource LabelContent}">
+                    <cf:RadMultipleSelectComboBox IsEnabled="{Binding Filter.HasRegion, Mode=OneWay}"
+                            ClearSelectionButtonVisibility="{Binding Filter.Regions.SelectAllVisibility, Mode=TwoWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                            Margin="0 0 0 10" Grid.Row="1" FontFamily="Segoe UI" DisplayMemberPath="Name" TextSearch.TextPath="Name"
+                               CheckAll="{Binding Filter.Regions.IsChecked, Mode=TwoWay}" SelectionCommand="{Binding Filter.Regions.SelectionChangedCommand}"  IsEditable="True" Style="{ StaticResource MultiSelectCombobox}" AllowMultipleSelection="True"
+                              ItemsSource="{Binding Filter.Regions.Items}" MultipleSelectionSeparator=","
+                              Width="200">
+
+                        <cf:RadMultipleSelectComboBox.ClearSelectionButtonContent>
+                            <StackPanel HorizontalAlignment="Stretch" Width="auto">
+                                <CheckBox MinWidth="170" Margin="-19 0 0 0" HorizontalContentAlignment="Left" HorizontalAlignment="Left" IsThreeState="True"
+                              Content="Select All"
+                              IsChecked="{Binding Filter.Regions.IsChecked, Mode=TwoWay}"
+                              Command="{x:Static tk:RadComboBoxCommands.ToggleSelectAll}"
+                               CommandParameter="{Binding Filter.Regions.IsChecked}"
+                               CommandTarget="{Binding ElementName=radComboBox}" />
+                            </StackPanel>
+                        </cf:RadMultipleSelectComboBox.ClearSelectionButtonContent>
+                    </cf:RadMultipleSelectComboBox>
+                </StackPanel>
+            </f:Label.Content>
+        </f:Label>
+
+        <f:Label HorizontalAlignment="Center" Header="{x:Static re:ShortageSurplus.LBL_Country}" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center">
+            <f:Label.Content>
+                <StackPanel Style="{StaticResource LabelContent}">
+                    <cf:RadMultipleSelectComboBox Margin="0 0 0 10" Grid.Row="1" FontFamily="Segoe UI" DisplayMemberPath="Name" TextSearch.TextPath="Name"
+                               CheckAll="{Binding Filter.Countries.IsChecked, Mode=TwoWay}"
+                                  SelectionCommand="{Binding Filter.Countries.SelectionChangedCommand}"  IsEditable="True" Style="{ StaticResource MultiSelectCombobox}" AllowMultipleSelection="True"
+                                   ItemsSource="{Binding Filter.Countries.Items}" MultipleSelectionSeparator=","
+                                                    ClearSelectionButtonVisibility="{Binding Filter.Countries.SelectAllVisibility, Mode=TwoWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                              Width="200">
+                        <cf:RadMultipleSelectComboBox.ClearSelectionButtonContent>
+                            <StackPanel HorizontalAlignment="Stretch" Width="auto">
+                                <CheckBox MinWidth="170" Margin="-19 0 0 0" HorizontalContentAlignment="Left" HorizontalAlignment="Left" IsThreeState="True"
+                              Content="Select All"
+                              IsChecked="{Binding Filter.Countries.IsChecked, Mode=TwoWay}"
+                              Command="{x:Static tk:RadComboBoxCommands.ToggleSelectAll}"
+                               CommandParameter="{Binding Filter.Countries.IsChecked}"
+                               CommandTarget="{Binding ElementName=radComboBox}" />
+                            </StackPanel>
+                        </cf:RadMultipleSelectComboBox.ClearSelectionButtonContent>
+                    </cf:RadMultipleSelectComboBox>
+                </StackPanel>
+            </f:Label.Content>
+        </f:Label>
+        <f:Label Header="{x:Static re:ShortageSurplus.LBL_Location}"  HorizontalAlignment="Center" Grid.Row="1" Grid.Column="2" VerticalAlignment="Center">
+            <f:Label.Content>
+                <StackPanel Style="{StaticResource LabelContent}">
+                    <cf:RadMultipleSelectComboBox Margin="0 0 0 10" Grid.Row="1" FontFamily="Segoe UI" DisplayMemberPath="Name" TextSearch.TextPath="Name"
+                               CheckAll="{Binding Filter.Locations.IsChecked, Mode=TwoWay}"
+                                                   SelectionCommand="{Binding Filter.Locations.SelectionChangedCommand}"  IsEditable="True" Style="{ StaticResource MultiSelectCombobox}" AllowMultipleSelection="True"
+                                   ItemsSource="{Binding Filter.Locations.Items}" MultipleSelectionSeparator=","
+                                                   ClearSelectionButtonVisibility="{Binding Filter.Locations.SelectAllVisibility, Mode=TwoWay, Converter={StaticResource BooleanToVisibilityConverter}}"
+                              Width="200">
+                        <cf:RadMultipleSelectComboBox.ClearSelectionButtonContent>
+                            <StackPanel HorizontalAlignment="Stretch" Width="auto">
+                                <CheckBox MinWidth="170" Margin="-19 0 0 0" HorizontalContentAlignment="Left" HorizontalAlignment="Left" IsThreeState="True"
+                                              Content="Select All"
+                                              IsChecked="{Binding Filter.Locations.IsChecked, Mode=TwoWay}"
+                                              Command="{x:Static tk:RadComboBoxCommands.ToggleSelectAll}"
+                                               CommandParameter="{Binding Filter.Locations.IsChecked}"
+                                               CommandTarget="{Binding ElementName=radComboBox}" />
+                            </StackPanel>
+                        </cf:RadMultipleSelectComboBox.ClearSelectionButtonContent>
+                    </cf:RadMultipleSelectComboBox>
+                </StackPanel>
+            </f:Label.Content>
+        </f:Label>
+        <Border BorderBrush="Gray" Grid.Row="2" Grid.ColumnSpan="3" BorderThickness="0 1 0 0" CornerRadius="0" Margin="0 10 0 0">
+            <Border.Effect>
+                <DropShadowEffect Color="LightGray" BlurRadius="6" ShadowDepth="1" Direction="0" />
+            </Border.Effect>
+        </Border>
+        <WrapPanel Grid.Row="3" Margin="10 0 10 0 " Grid.ColumnSpan="3">
+            <tk:RadButton Style="{StaticResource primarybutton}" Content="{x:Static re:ShortageSurplus.LBL_Search}" Command="{Binding SearchCommand}" />
+            <TextBlock Width="30px"  ></TextBlock>
+            <tk:RadButton Content="{x:Static re:ShortageSurplus.LBL_Clear}"  Command="{Binding ClearCommand}" CommandParameter="{Binding}" />
+        </WrapPanel>
+        <Border BorderBrush="Gray" Background="White" Grid.Row="4" Grid.ColumnSpan="3" Grid.RowSpan="3" BorderThickness="0 1 0 0" CornerRadius="0" Margin="0 10 0 0">
+            <Border.Effect>
+                <DropShadowEffect Color="LightGray" BlurRadius="6" ShadowDepth="1" Direction="0" />
+            </Border.Effect>
+        </Border>
+
+        <StackPanel Margin="0 10 0 0" Grid.Row="4" Grid.ColumnSpan="3" VerticalAlignment="Top">
+            <WrapPanel  Style="{StaticResource wraptitlebar}">
+                <Label Content="{x:Static re:ShortageSurplus.LBL_EquipmentShortageSurpluscounter}" HorizontalAlignment="Left" FontSize="14" FontWeight="Normal" FontFamily="Segoe UI" Foreground="White" d:LayoutOverrides="Height" />
+            </WrapPanel>
+        </StackPanel>
+        <WrapPanel HorizontalAlignment="Right" Grid.Row="5" Grid.ColumnSpan="3">
+            <tk:RadButton Content="{x:Static re:ShortageSurplus.LBL_CurrentWeek}" FontSize="16" Height="40" />
+            <tk:RadButton Height="40" Content="{x:Static re:ShortageSurplus.LBL_NextWeek}" FontSize="16" IsEnabled="False" />
+        </WrapPanel>
+        <StackPanel Grid.Row="6" Grid.ColumnSpan="3">
+            <tk:RadGridView IsFilteringAllowed="False" CanUserSortColumns="False" SelectionMode="Single" SelectionUnit="Cell"
+                            SelectedItem="{Binding Current}"
+                       e:RadGridCellDoubleClick.RowDoubleClickCommand="{Binding CellSelectionCommand}"
+                    FrozenColumnsSplitterVisibility="Collapsed" RowIndicatorVisibility="Collapsed"  ShowGroupPanel="False" AutoGenerateColumns="False" IsReadOnly="True" ItemsSource="{Binding PagedSource,ElementName=pager}" Grid.RowSpan="2">
+                <tk:RadGridView.ColumnGroups>
+                    <tk:GridViewColumnGroup Name="Standards">
+                        <tk:GridViewColumnGroup.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{x:Static re:ShortageSurplus.LBL_STANDARD}" HorizontalAlignment="Center" />
+                            </DataTemplate>
+                        </tk:GridViewColumnGroup.HeaderTemplate>
+                    </tk:GridViewColumnGroup>
+                    <tk:GridViewColumnGroup  Name="Reefers">
+                        <tk:GridViewColumnGroup.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{x:Static re:ShortageSurplus.LBL_REEFER}" HorizontalAlignment="Center" />
+                            </DataTemplate>
+                        </tk:GridViewColumnGroup.HeaderTemplate>
+                    </tk:GridViewColumnGroup>
+                    <tk:GridViewColumnGroup  Name="Specials">
+                        <tk:GridViewColumnGroup.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{x:Static re:ShortageSurplus.LBL_SPECIAL}" HorizontalAlignment="Center" />
+                            </DataTemplate>
+                        </tk:GridViewColumnGroup.HeaderTemplate>
+                    </tk:GridViewColumnGroup>
+                </tk:RadGridView.ColumnGroups>
+                <tk:RadGridView.Columns>
+                    <tk:GridViewDataColumn HeaderTextAlignment="Center" TextAlignment="Left" Width="2*" DataMemberBinding="{Binding Location.Name}" Header="{x:Static re:ShortageSurplus.LBL_Location}" />
+                    <tk:GridViewDataColumn HeaderTextAlignment="Center" TextAlignment="Left" Width="2*" DataMemberBinding="{Binding Country.Name}" Header="{x:Static re:ShortageSurplus.LBL_Country}" />
+                    <tk:GridViewDataColumn HeaderTextAlignment="Center" Width="*" DataMemberBinding="{Binding Standard20DV.Imbalance}" Header="{x:Static re:SizeType.LBL_20DV}" ColumnGroupName="Standards">
+                        <tk:GridViewDataColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Standard20DV.Imbalance}" TextAlignment="Right" Foreground="{ Binding Standard20DV.Imbalance, Converter={StaticResource ColorConverter}}" />
+                            </DataTemplate>
+                        </tk:GridViewDataColumn.CellTemplate>
+                    </tk:GridViewDataColumn>
+                    <tk:GridViewDataColumn HeaderTextAlignment="Center"  Width="*"  DataMemberBinding="{Binding Standard40DV.Imbalance}" Header="{x:Static re:SizeType.LBL_40DV}" ColumnGroupName="Standards">
+                        <tk:GridViewDataColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Standard40DV.Imbalance}" TextAlignment="Right" Foreground="{ Binding Standard40DV.Imbalance, Converter={StaticResource ColorConverter}}" />
+                            </DataTemplate>
+                        </tk:GridViewDataColumn.CellTemplate>
+                    </tk:GridViewDataColumn>
+                    <tk:GridViewDataColumn HeaderTextAlignment="Center" Width="*" DataMemberBinding="{Binding Standard40HC.Imbalance}" Header="{x:Static re:SizeType.LBL_40HC}" ColumnGroupName="Standards">
+                        <tk:GridViewDataColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Standard40HC.Imbalance}" TextAlignment="Right" Foreground="{ Binding Standard40HC.Imbalance, Converter={StaticResource ColorConverter}}" />
+                            </DataTemplate>
+                        </tk:GridViewDataColumn.CellTemplate>
+                    </tk:GridViewDataColumn>
+                    <tk:GridViewDataColumn  HeaderTextAlignment="Center" Width="*" TextAlignment="Right" DataMemberBinding="{Binding Standard40HP.Imbalance}" Header="{x:Static re:SizeType.LBL_40HP}" ColumnGroupName="Standards">
+                        <tk:GridViewDataColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Standard40HP.Imbalance}" TextAlignment="Right" Foreground="{ Binding Standard40HP.Imbalance, Converter={StaticResource ColorConverter}}" />
+                            </DataTemplate>
+                        </tk:GridViewDataColumn.CellTemplate>
+                    </tk:GridViewDataColumn>
+                    <tk:GridViewDataColumn HeaderTextAlignment="Center" Width="*" TextAlignment="Right" DataMemberBinding="{Binding Standard45HC.Imbalance}" Header="{x:Static re:SizeType.LBL_45HC}" ColumnGroupName="Standards">
+                        <tk:GridViewDataColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Standard45HC.Imbalance}" TextAlignment="Right" Foreground="{ Binding Standard45HC.Imbalance, Converter={StaticResource ColorConverter}}" />
+                            </DataTemplate>
+                        </tk:GridViewDataColumn.CellTemplate>
+                    </tk:GridViewDataColumn>
+                    <tk:GridViewDataColumn HeaderTextAlignment="Center" Width="*" DataMemberBinding="{Binding Standard45HP.Imbalance}" Header="{x:Static re:SizeType.LBL_45HP}" ColumnGroupName="Standards">
+                        <tk:GridViewDataColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Standard45HP.Imbalance}" TextAlignment="Right" Foreground="{ Binding Standard45HP.Imbalance, Converter={StaticResource ColorConverter}}" />
+                            </DataTemplate>
+                        </tk:GridViewDataColumn.CellTemplate>
+                    </tk:GridViewDataColumn>
+
+                    <tk:GridViewDataColumn HeaderTextAlignment="Center" Width="*" DataMemberBinding="{Binding Reefer20RE.Imbalance}" Header="{x:Static re:SizeType.LBL_20RE}" ColumnGroupName="Reefers">
+                        <tk:GridViewDataColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Reefer20RE.Imbalance}" TextAlignment="Right" Foreground="{ Binding Reefer20RE.Imbalance, Converter={StaticResource ColorConverter}}" />
+                            </DataTemplate>
+                        </tk:GridViewDataColumn.CellTemplate>
+                    </tk:GridViewDataColumn>
+                    <tk:GridViewDataColumn  HeaderTextAlignment="Center" Width="*" DataMemberBinding="{Binding Reefer40HR.Imbalance}" Header="{x:Static re:SizeType.LBL_40HR}" ColumnGroupName="Reefers">
+                        <tk:GridViewDataColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Reefer40HR.Imbalance}" TextAlignment="Right" Foreground="{ Binding Reefer40HR.Imbalance, Converter={StaticResource ColorConverter}}" />
+                            </DataTemplate>
+                        </tk:GridViewDataColumn.CellTemplate>
+                    </tk:GridViewDataColumn>
+
+                    <tk:GridViewDataColumn  HeaderTextAlignment="Center" Width="*" DataMemberBinding="{Binding Special20OT.Imbalance}" Header="{x:Static re:SizeType.LBL_20OT}" ColumnGroupName="Specials">
+                        <tk:GridViewDataColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Special20OT.Imbalance}" TextAlignment="Right" Foreground="{ Binding Special20OT.Imbalance, Converter={StaticResource ColorConverter}}" />
+                            </DataTemplate>
+                        </tk:GridViewDataColumn.CellTemplate>
+                    </tk:GridViewDataColumn>
+                    <tk:GridViewDataColumn  HeaderTextAlignment="Center" Width="*" DataMemberBinding="{Binding Special20FL.Imbalance}" Header="{x:Static re:SizeType.LBL_20FL}" ColumnGroupName="Specials">
+                        <tk:GridViewDataColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Special20FL.Imbalance}"  TextAlignment="Right" Foreground="{ Binding Special20FL.Imbalance, Converter={StaticResource ColorConverter}}" />
+                            </DataTemplate>
+                        </tk:GridViewDataColumn.CellTemplate>
+                    </tk:GridViewDataColumn>
+                    <tk:GridViewDataColumn  HeaderTextAlignment="Center" Width="*" DataMemberBinding="{Binding Special20PL.Imbalance}" Header="{x:Static re:SizeType.LBL_20PL}" ColumnGroupName="Specials">
+                        <tk:GridViewDataColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Special20PL.Imbalance}"  TextAlignment="Right" Foreground="{ Binding Special20PL.Imbalance, Converter={StaticResource ColorConverter}}" />
+                            </DataTemplate>
+                        </tk:GridViewDataColumn.CellTemplate>
+                    </tk:GridViewDataColumn>
+                    <tk:GridViewDataColumn  HeaderTextAlignment="Center" Width="*" DataMemberBinding="{Binding Special40OT.Imbalance}" Header="{x:Static re:SizeType.LBL_40OT}" ColumnGroupName="Specials">
+                        <tk:GridViewDataColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Special40OT.Imbalance}" TextAlignment="Right" Foreground="{ Binding Special40OT.Imbalance, Converter={StaticResource ColorConverter}}" />
+                            </DataTemplate>
+                        </tk:GridViewDataColumn.CellTemplate>
+                    </tk:GridViewDataColumn>
+                    <tk:GridViewDataColumn  HeaderTextAlignment="Center" Width="*" DataMemberBinding="{Binding Special40FL.Imbalance}" Header="{x:Static re:SizeType.LBL_40FL}" ColumnGroupName="Specials">
+                        <tk:GridViewDataColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Special40FL.Imbalance}" TextAlignment="Right" Foreground="{ Binding Special40FL.Imbalance, Converter={StaticResource ColorConverter}}" />
+                            </DataTemplate>
+                        </tk:GridViewDataColumn.CellTemplate>
+                    </tk:GridViewDataColumn>
+                    <tk:GridViewDataColumn  HeaderTextAlignment="Center" Width="*" DataMemberBinding="{Binding Special40PL.Imbalance}" Header="{x:Static re:SizeType.LBL_40PL}" ColumnGroupName="Specials">
+                        <tk:GridViewDataColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Special40PL.Imbalance}" TextAlignment="Right" Foreground="{ Binding Special40PL.Imbalance, Converter={StaticResource ColorConverter}}" />
+                            </DataTemplate>
+                        </tk:GridViewDataColumn.CellTemplate>
+                    </tk:GridViewDataColumn>
+                </tk:RadGridView.Columns>
+            </tk:RadGridView>
+            <tk:RadDataPager x:Name="pager" Source="{Binding Items}"></tk:RadDataPager>
+        </StackPanel>
+    </Grid>
