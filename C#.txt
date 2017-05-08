@@ -13,3 +13,4 @@ Pager
 https://social.msdn.microsoft.com/Forums/vstudio/en-US/7c897b14-4130-4ebc-9258-93298e4116eb/paging-in-datagrid-wpf?forum=wpf
 http://stackoverflow.com/questions/784726/how-can-i-paginate-a-wpf-datagrid
 http://wpfextendeddatagrid.codeplex.com/
+http://datagridextensions.codeplex.com/
