@@ -14,3 +14,6 @@ https://social.msdn.microsoft.com/Forums/vstudio/en-US/7c897b14-4130-4ebc-9258-9
 http://stackoverflow.com/questions/784726/how-can-i-paginate-a-wpf-datagrid
 http://wpfextendeddatagrid.codeplex.com/
 http://datagridextensions.codeplex.com/
+
+Visual Studiio product
+https://marketplace.visualstudio.com/vscode
