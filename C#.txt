@@ -20,3 +20,7 @@ https://marketplace.visualstudio.com/vscode
 
 Title bar with custom text
 http://stackoverflow.com/questions/21072187/replace-window-title-with-menu-for-mahapps-metro-borderless-window
+
+
+Notifications
+https://github.com/raflop/ToastNotifications
