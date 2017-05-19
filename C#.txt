@@ -24,3 +24,6 @@ http://stackoverflow.com/questions/21072187/replace-window-title-with-menu-for-m
 
 Notifications
 https://github.com/raflop/ToastNotifications
+
+Material Design style web
+https://material.io/guidelines/layout/structure.html#structure-app-bar
