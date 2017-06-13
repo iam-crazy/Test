@@ -27,3 +27,6 @@ https://github.com/raflop/ToastNotifications
 
 Material Design style web
 https://material.io/guidelines/layout/structure.html#structure-app-bar
+
+Visual Studio
+http://www.kunal-chowdhury.com/2016/06/visual-studio-2015-update-3.html
