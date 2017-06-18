@@ -30,3 +30,5 @@ https://material.io/guidelines/layout/structure.html#structure-app-bar
 
 Visual Studio
 http://www.kunal-chowdhury.com/2016/06/visual-studio-2015-update-3.html
+
+http://www.askme4tech.com/enable-hyperv-client-in-windows8.1
