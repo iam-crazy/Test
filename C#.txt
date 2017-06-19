@@ -32,3 +32,6 @@ Visual Studio
 http://www.kunal-chowdhury.com/2016/06/visual-studio-2015-update-3.html
 
 http://www.askme4tech.com/enable-hyperv-client-in-windows8.1
+
+
+https://superuser.com/questions/247392/unable-to-uninstall-virtualbox-network-drivers
