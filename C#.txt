@@ -43,3 +43,6 @@ http://www.appliedcodelog.com/2016/05/material-design-tab-in-xamarin-android.htm
 https://github.com/ActiveNick/MyWeather
 
 https://visualstudiomagazine.com/articles/2015/03/01/everyone-gets-xaml-with-xamarinforms.aspx
+
+Menu layout 
+https://github.com/garuma/FlyOutMenu
