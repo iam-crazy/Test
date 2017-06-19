@@ -39,3 +39,5 @@ https://superuser.com/questions/247392/unable-to-uninstall-virtualbox-network-dr
 https://herejohn.wordpress.com/2016/04/16/how-to-create-android-material-design-by-xamarin/
 
 http://www.appliedcodelog.com/2016/05/material-design-tab-in-xamarin-android.html
+
+https://github.com/ActiveNick/MyWeather
