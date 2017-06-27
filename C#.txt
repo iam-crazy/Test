@@ -60,4 +60,6 @@ https://developer.xamarin.com/guides/android/deployment,_testing,_and_metrics/de
 Xamarin Material Design
 https://developer.xamarin.com/guides/android/user_interface/material_theme/
 
+Tile
+https://code.msdn.microsoft.com/vstudio/Windows-Phone-XAML-Create-3707b497
 
