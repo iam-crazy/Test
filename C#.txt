@@ -64,3 +64,5 @@ Tile
 https://code.msdn.microsoft.com/vstudio/Windows-Phone-XAML-Create-3707b497
 
 https://github.com/supreettare/XFUI/tree/master/XFormsUI/XFormsUI
+
+https://github.com/jamesmontemagno/MyShoppe
