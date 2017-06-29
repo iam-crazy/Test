@@ -77,3 +77,6 @@ Xamarin PopUP
 
 https://github.com/rotorgames/Rg.Plugins.Popup
 https://github.com/michaeled/FormsPopup
+
+Round button 
+https://www.codeproject.com/Articles/32257/A-Style-for-Round-Glassy-WPF-Buttons
