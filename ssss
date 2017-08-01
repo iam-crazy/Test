@@ -1,0 +1,77 @@
+//-----------------------------------------------------------------------
+// <copyright file = "App.xaml.cs" company = "MSC Technology">
+//   Mediterranean Shipping Company SA. OneVision Project.
+// </copyright>
+// <summary>
+//   Declare App.
+// </summary>
+//-----------------------------------------------------------------------
+namespace Msc.Logistics.ESR.Presentation
+{
+    using System;
+    using System.Windows;
+    using System.Windows.Threading;
+    using Extensions;
+    using Framework.Common.Logging;
+    using Infrastructure.Ioc;
+    using LightInject;
+    using Resource;
+    using ViewModels;
+
+    /// <summary>
+    /// Declare logic for App.
+    /// </summary>
+    /// <seealso cref="Application" />
+    public partial class App : Application
+    {
+        /// <summary>
+        /// The logger.
+        /// </summary>
+        internal readonly ILogger Logger;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="App"/> class.
+        /// </summary>
+        public App() : base()
+        {
+            this.DispatcherUnhandledException += this.App_DispatcherUnhandledException;
+            var loggerManager = ConfiguredContainer.Current.GetInstance<ILoggerManager>();
+            loggerManager.Start();
+            this.Logger = Extension.GetInstance<ILogger>();
+        }
+
+        /// <summary>
+        /// Raises the <see cref="E:System.Windows.Application.Startup" /> event.
+        /// </summary>
+        /// <param name="e">A <see cref="T:System.Windows.StartupEventArgs" /> that contains the event data.</param>
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+            NavigationManager.Startup();
+        }
+
+        /// <summary>
+        /// Handles the DispatcherUnhandledException event of the App control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="DispatcherUnhandledExceptionEventArgs"/> instance containing the event data.</param>
+        private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        {
+            e.Handled = true;
+            log4net.GlobalContext.Properties["ModuleName"] = "Equipment_Stock_and_Empty_Repositioning";
+            if (e.Exception is AggregateException)
+            {
+                var exception = e.Exception as AggregateException;
+                exception.Flatten();
+                this.Logger.Error(exception.Message, exception);
+            }
+            else
+            {
+                this.Logger.Error(e.Exception.Message, e.Exception);
+            }
+
+            MessageBox.Show(Common.LBL_EXCEPTION, Common.LBL_EquipmentStockEmptyRepositioning, MessageBoxButton.OK, MessageBoxImage.Error);
+            MainViewModel.Current.ShowBusy(false);
+        }
+    }
+}
