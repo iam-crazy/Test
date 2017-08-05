@@ -1,0 +1,431 @@
+CREATE TABLE `parameters` (
+  `Id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `Name` varchar(200) NOT NULL,
+  `AcceptableLimit` varchar(100) DEFAULT NULL,
+  `PermissableLimit` varchar(100) DEFAULT NULL,
+  `CreatedBy` varchar(200) DEFAULT NULL,
+  `CreatedOn` date DEFAULT NULL,
+  `ModifiedBy` varchar(200) DEFAULT NULL,
+  `ModifiedOn` date DEFAULT NULL,
+  `HasDrinkingPurpose` bit(1) DEFAULT NULL,
+  `HasConstructionPurpose` bit(1) DEFAULT NULL,
+  `HasAnalyticalPurpose` bit(1) DEFAULT NULL,
+  `ParameterType` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`Id`)
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=latin1;
+
+
+
+DROP PROCEDURE IF EXISTS watermanagementsystem.jobresultSelection;
+CREATE PROCEDURE watermanagementsystem.`jobresultSelection`(
+$jobId bigint ,
+$jobTitle varchar(50)
+)
+begin
+
+if $jobTitle='Drinking Purpose' then
+    begin
+        SET @ROW_NUMBER = 0;
+        SELECT
+              ( @ROW_NUMBER := @ROW_NUMBER + 1) AS SERIALNO, 
+              a.Id as Id, 
+              a.JobId as JobId, 
+              a.ParameterId as ParameterId, 
+              a.Parameter as Name,
+              a.Result as Result,
+              a.AcceptableLimit as AcceptableLimit,
+              a.PermissableLimit as PermissableLimit, 
+              a.JobTitle  as JobTitle 
+        FROM watermanagementsystem.jobresult a 
+        left join watermanagementsystem.parameters b
+        on a.Id=b.Id where a.JobId=$jobId order by b.Id Asc;
+    end;
+ elseif $jobTitle='Construction Purpose' then
+     begin 
+     SET @ROW_NUMBER = 0;
+        SELECT
+              ( @ROW_NUMBER := @ROW_NUMBER + 1) AS SERIALNO, 
+              a.Id as Id, 
+              a.JobId as JobId, 
+              a.ParameterId as ParameterId, 
+              a.Parameter as Name,
+              a.Result as Result,
+              a.AcceptableLimit as AcceptableLimit,
+              a.PermissableLimit as PermissableLimit, 
+              a.JobTitle  as JobTitle 
+        FROM watermanagementsystem.jobresult a 
+        left join watermanagementsystem.parameters b
+        on a.Id=b.Id where a.JobId=$jobId order by b.Id Asc;
+--         SET @ROW_NUMBER = 0;
+--         select * from (select * from (SELECT
+--               ( @ROW_NUMBER := @ROW_NUMBER + 1) AS SERIALNO, 
+--               a.Id as Id, 
+--               a.JobId as JobId, 
+--               a.ParameterId as ParameterId, 
+--               a.Parameter as Name,
+--               a.Result as Result,
+--               a.AcceptableLimit as AcceptableLimit,
+--               a.PermissableLimit as PermissableLimit, 
+--               a.JobTitle  as JobTitle 
+--         FROM watermanagementsystem.jobresult a 
+--         left join watermanagementsystem.parameters b
+--         on a.Id=b.Id where a.JobId=$jobId order by b.Id Asc)  g
+--         union all
+--         select       
+--               ( @ROW_NUMBER := @ROW_NUMBER + 1) AS SERIALNO, 
+--                0 as Id,
+--                $jobId as JobId,
+--                c.id as ParameterId,
+--                c.Name as Name,
+--                '' as Result,
+--                c.AcceptableLimit as AcceptableLimit,
+--                c.PermissableLimit as PermissableLimit, 
+--                $jobTitle as JobTitle 
+--         from watermanagementsystem.parameters c 
+--            where c.Id not in 
+--             (
+--                 select d.ParameterId 
+--                 from watermanagementsystem.jobresult d
+--                 where d.JobId=$jobId
+--             )
+--             and c.HasConstructionPurpose=1
+--          ) m
+--          order by m.SERIALNO asc;
+    end;
+ elseif $jobTitle='Analytical Purpose' then
+     begin
+        SET @ROW_NUMBER = 0;
+      SELECT
+              ( @ROW_NUMBER := @ROW_NUMBER + 1) AS SERIALNO, 
+              a.Id as Id, 
+              a.JobId as JobId, 
+              a.ParameterId as ParameterId, 
+              a.Parameter as Name,
+              a.Result as Result,
+              a.AcceptableLimit as AcceptableLimit,
+              a.PermissableLimit as PermissableLimit, 
+              a.JobTitle  as JobTitle 
+        FROM watermanagementsystem.jobresult a 
+        left join watermanagementsystem.parameters b
+        on a.Id=b.Id where a.JobId=$jobId order by b.Id Asc;
+    end;
+    elseif $jobTitle='Default Drinking' then
+     begin
+          SELECT
+              ( @ROW_NUMBER := @ROW_NUMBER + 1) AS SERIALNO, 
+              
+              0 as Id, 
+              0 as JobId, 
+              a.Id as ParameterId, 
+              a.Name as Name,
+              a.AcceptableLimit as AcceptableLimit,
+              a.PermissableLimit as PermissableLimit, 
+              '' as Result,
+              '' as JobTitle 
+        FROM watermanagementsystem.parameters a where a.HasDrinkingPurpose=1;
+    end;
+    elseif $jobTitle='Default Construction' then
+     begin
+          SELECT
+              ( @ROW_NUMBER := @ROW_NUMBER + 1) AS SERIALNO, 
+              
+              0 as Id, 
+              0 as JobId, 
+              a.Id as ParameterId, 
+              a.Name as Name,
+              a.AcceptableLimit as AcceptableLimit,
+              a.PermissableLimit as PermissableLimit, 
+              '' as Result,
+              '' as JobTitle 
+        FROM watermanagementsystem.parameters a where a.HasConstructionPurpose=1;
+    end;
+ elseif $jobTitle='Default Analytical' then
+     begin
+          SELECT
+              ( @ROW_NUMBER := @ROW_NUMBER + 1) AS SERIALNO, 
+              
+              0 as Id, 
+              0 as JobId, 
+              a.Id as ParameterId, 
+              a.Name as Name,
+              a.AcceptableLimit as AcceptableLimit,
+              a.PermissableLimit as PermissableLimit, 
+              '' as Result,
+              '' as JobTitle 
+        FROM watermanagementsystem.parameters a where a.HasAnalyticalPurpose  =1;
+    end;
+ END IF;
+ end;
+DROP PROCEDURE IF EXISTS watermanagementsystem.JOBSUMMARYSELECTION;
+CREATE PROCEDURE watermanagementsystem.`JOBSUMMARYSELECTION`(
+      $KEYCODE VARCHAR(20),
+      $FROMDATE DATE, 
+      $TODATE DATE,
+      $CHALLANNO VARCHAR(100),
+      $RESULT  VARCHAR(100),
+      $STATUS  VARCHAR(100)
+  )
+BEGIN
+ SET @ROW_NUMBER = 0;
+      IF $KEYCODE='ALL'  THEN  
+          SELECT ( @ROW_NUMBER := @ROW_NUMBER + 1) AS SERIALNO , A.* 
+          FROM JOBDETAILS A 
+          WHERE A.CHALLANNO	!='' ORDER BY A.ID DESC ;
+      ELSEIF $KEYCODE='CHALLANNOONLY'  THEN  
+          SELECT ( @ROW_NUMBER := @ROW_NUMBER + 1) AS SERIALNO , A.* 
+          FROM JOBDETAILS A 
+          WHERE A.CHALLANNO	= $CHALLANNO
+          ORDER BY A.ID DESC;
+      ELSEIF $KEYCODE='CHALLANNO'  THEN  
+          SELECT ( @ROW_NUMBER := @ROW_NUMBER + 1) AS SERIALNO , A.* 
+          FROM JOBDETAILS A 
+          WHERE A.CHALLANNO	= $CHALLANNO
+          ORDER BY A.ID DESC;
+      ELSEIF $KEYCODE='RESULT'  THEN  
+          SELECT ( @ROW_NUMBER := @ROW_NUMBER + 1) AS SERIALNO , A.* 
+          FROM JOBDETAILS A 
+          WHERE A.RESULT	= $RESULT
+          ORDER BY A.ID DESC;
+      ELSEIF $KEYCODE='STATUS'  THEN  
+          SELECT ( @ROW_NUMBER := @ROW_NUMBER + 1) AS SERIALNO , A.* 
+          FROM JOBDETAILS A 
+          WHERE A.STATUS	= $STATUS
+          ORDER BY A.ID DESC;
+      ELSEIF $KEYCODE='STATUSRESULT'  THEN  
+          SELECT ( @ROW_NUMBER := @ROW_NUMBER + 1) AS SERIALNO , A.* 
+          FROM JOBDETAILS A 
+          WHERE A.STATUS	= $STATUS AND A.RESULT	= $RESULT
+          ORDER BY A.ID DESC;
+      ELSEIF $KEYCODE='STATUSCHALLANNO'  THEN  
+          SELECT ( @ROW_NUMBER := @ROW_NUMBER + 1) AS SERIALNO , A.* 
+          FROM JOBDETAILS A 
+          WHERE A.STATUS	= $STATUS AND A.CHALLANNO	= $CHALLANNO
+          ORDER BY A.ID DESC;
+      ELSEIF $KEYCODE='STATUSDATE'  THEN  
+          SELECT ( @ROW_NUMBER := @ROW_NUMBER + 1) AS SERIALNO , A.* 
+          FROM JOBDETAILS A 
+          WHERE A.STATUS	= $STATUS AND A.CHALLANDATE 	
+ >= $FROMDATE AND A.CHALLANDATE<= $TODATE
+          ORDER BY A.ID DESC;
+      ELSEIF $KEYCODE='RESULTDATE'  THEN  
+          SELECT ( @ROW_NUMBER := @ROW_NUMBER + 1) AS SERIALNO , A.* 
+          FROM JOBDETAILS A 
+          WHERE A.RESULT	= $RESULT AND A.CHALLANDATE 	
+ >= $FROMDATE AND A.CHALLANDATE<= $TODATE
+          ORDER BY A.ID DESC;
+      ELSEIF $KEYCODE='RESULTCHALLANNO'  THEN  
+          SELECT ( @ROW_NUMBER := @ROW_NUMBER + 1) AS SERIALNO , A.* 
+          FROM JOBDETAILS A 
+          WHERE A.RESULT	= $RESULT AND A.CHALLANNO	= $CHALLANNO
+          ORDER BY A.ID DESC;
+      ELSEIF $KEYCODE='CHALLANNODATE'  THEN  
+          SELECT ( @ROW_NUMBER := @ROW_NUMBER + 1) AS SERIALNO , A.* 
+          FROM JOBDETAILS A 
+          WHERE  A.CHALLANNO	= $CHALLANNO AND A.CHALLANDATE 	
+ >= $FROMDATE AND A.CHALLANDATE<= $TODATE
+          ORDER BY A.ID DESC;
+      ELSEIF $KEYCODE='CHALLANNORESULTSTATUS'  THEN  
+          SELECT ( @ROW_NUMBER := @ROW_NUMBER + 1) AS SERIALNO , A.* 
+          FROM JOBDETAILS A 
+          WHERE  A.CHALLANNO	= $CHALLANNO AND A.RESULT	= $RESULT AND A.STATUS	= $STATUS
+          ORDER BY A.ID DESC;
+      ELSEIF $KEYCODE='RESULTSTATUSDATE'  THEN  
+          SELECT ( @ROW_NUMBER := @ROW_NUMBER + 1) AS SERIALNO , A.* 
+          FROM JOBDETAILS A 
+          WHERE  A.CHALLANDATE 	
+ >= $FROMDATE AND A.CHALLANDATE<= $TODATE AND A.RESULT	= $RESULT AND A.STATUS	= $STATUS
+          ORDER BY A.ID DESC;
+      ELSEIF $KEYCODE='CHALLANNORESULTDATE'  THEN  
+          SELECT ( @ROW_NUMBER := @ROW_NUMBER + 1) AS SERIALNO , A.* 
+          FROM JOBDETAILS A 
+          WHERE  A.CHALLANDATE 	
+ >= $FROMDATE AND A.CHALLANDATE<= $TODATE AND A.RESULT	= $RESULT AND A.CHALLANNO	= $CHALLANNO
+          ORDER BY A.ID DESC;
+      ELSEIF $KEYCODE='CHALLANNOSTATUSDATE'  THEN  
+          SELECT ( @ROW_NUMBER := @ROW_NUMBER + 1) AS SERIALNO , A.* 
+          FROM JOBDETAILS A 
+          WHERE  A.CHALLANDATE 	
+ >= $FROMDATE AND A.CHALLANDATE<= $TODATE AND A.STATUS	= $STATUS AND A.CHALLANNO	= $CHALLANNO
+          ORDER BY A.ID DESC;
+      ELSEIF $KEYCODE='DATE'  THEN  
+          SELECT ( @ROW_NUMBER := @ROW_NUMBER + 1) AS SERIALNO , A.* FROM JOBDETAILS A WHERE A.CHALLANDATE 	
+ >= $FROMDATE AND A.CHALLANDATE<= $TODATE ORDER BY A.ID DESC;
+      END IF;
+END;
+DROP PROCEDURE IF EXISTS watermanagementsystem.WMSJOBDETAILSINSERTUPDATE;
+CREATE PROCEDURE watermanagementsystem.`WMSJOBDETAILSINSERTUPDATE`(
+$ISSAVE BIT, 
+$ID BIGINT,
+$CHALLANNO VARCHAR(100),
+$CHALLANDATE	DATE	,
+$DATEOFCOLLECTION	DATE,
+$DATEOFRECEIPT	DATE	,
+$SOURCEASPERLABEL	VARCHAR(1000)	,
+$SAMPLESENTBY	VARCHAR(100)	,
+$CREATEDBY VARCHAR(100)	,
+$JOBTITLE VARCHAR(30),
+$AMOUNT DECIMAL,
+$STATUS  VARCHAR(100)	,
+$RESULT  VARCHAR(100)	,
+$REPORT  VARCHAR(2000)	,
+               
+OUT $OUTPUT  VARCHAR(200)
+)
+BEGIN
+ -- DECLARE EXIT HANDLER FOR SQLEXCEPTION 
+  --
+   -- SET $OUTPUT='ERROR';BEGIN
+  --  ROLLBACK;
+ -- END;START TRANSACTION;
+   IF $ISSAVE=1 THEN
+        BEGIN 
+        
+              INSERT INTO JOBDETAILS
+                ( 
+                  CHALLANNO,
+                  CHALLANDATE,
+                  DATEOFCOLLECTION,
+                  DATEOFRECEIPT,
+                  SOURCEASPERLABEL,
+                  SAMPLESENTBY,
+                  CREATEDBY,
+                  JOBTITLE	,
+                    AMOUNT,
+                    STATUS,
+                    RESULT,
+                    REPORT
+                 )
+              VALUES
+                (
+                  $CHALLANNO,
+                  $CHALLANDATE,
+                  $DATEOFCOLLECTION,
+                  $DATEOFRECEIPT,
+                  $SOURCEASPERLABEL,
+                  $SAMPLESENTBY,
+                  $CREATEDBY,
+                  $JOBTITLE,
+                  $AMOUNT,
+                  $STATUS,
+                  $RESULT,
+                  $REPORT
+                );
+         -- COMMIT;
+          SET $OUTPUT=LAST_INSERT_ID();
+        END;
+    ELSE  
+        BEGIN 
+            UPDATE  JOBDETAILS SET 
+                    CHALLANNO=$CHALLANNO,
+                    CHALLANDATE=$CHALLANDATE,
+                    DATEOFCOLLECTION=$DATEOFCOLLECTION,
+                    DATEOFRECEIPT=$DATEOFRECEIPT,
+                    SOURCEASPERLABEL=$SOURCEASPERLABEL,
+                    SAMPLESENTBY=$SAMPLESENTBY,
+                    CREATEDBY=$CREATEDBY,
+                    JOBTITLE=$JOBTITLE,
+                    AMOUNT =$AMOUNT,
+                    STATUS =$STATUS,
+                    RESULT =$RESULT,
+                    REPORT =$REPORT
+            WHERE ID=$ID; 
+           SET $OUTPUT=$ID;
+        END;
+    END IF;  
+END;
+DROP PROCEDURE IF EXISTS watermanagementsystem.WmsJobResultInsertUpdate;
+CREATE PROCEDURE watermanagementsystem.`WmsJobResultInsertUpdate`(
+$ISSAVE BIT, 
+$ID BIGINT,
+$JOBID BIGINT,
+$PARAMETER	VARCHAR(500)	,
+$RESULT	VARCHAR(100)	,
+$ACCEPTABLELIMIT	VARCHAR(100)	,
+$PERMISSABLELIMIT	VARCHAR(100)	,
+$jobTitle VARCHAR(100)	,
+$ParameterId bigint,
+OUT $OUTPUT  VARCHAR(200)
+)
+BEGIN
+   IF $ISSAVE=1 THEN
+        BEGIN 
+              INSERT INTO JOBRESULT
+                  (JOBID,PARAMETER,RESULT,ACCEPTABLELIMIT,PERMISSABLELIMIT	,jobTitle,ParameterId
+)
+              VALUES
+                  ($JOBID,$PARAMETER,$RESULT,$ACCEPTABLELIMIT,$PERMISSABLELIMIT,$jobTitle,$ParameterId);
+          SET $OUTPUT=LAST_INSERT_ID();
+        END;
+    ELSE  
+        BEGIN 
+            UPDATE  JOBRESULT SET 
+                    JOBID=$JOBID,
+                    PARAMETER=$PARAMETER,
+                    RESULT=$RESULT,
+                    ACCEPTABLELIMIT=$ACCEPTABLELIMIT,
+                    PERMISSABLELIMIT=$PERMISSABLELIMIT,
+                    jobTitle=$jobTitle,
+                    ParameterId=$ParameterId
+            WHERE ID=$ID; 
+           SET $OUTPUT=$ID;
+        END;
+    END IF;  
+END;
+DROP PROCEDURE IF EXISTS watermanagementsystem.WMSPARAMTERINSERTUPDATE;
+CREATE PROCEDURE watermanagementsystem.`WMSPARAMTERINSERTUPDATE`( 
+   $ISSAVE BIT,
+   $ID BIGINT,
+   $NAME VARCHAR(200),
+   $ACCEPTABLELIMIT VARCHAR(100),
+   $PERMISSABLELIMIT VARCHAR(100),
+   $CREATEDBY VARCHAR(200),
+   $PARAMETERTYPE VARCHAR(100),
+   OUT $OUTPUT  VARCHAR(200)
+  )
+BEGIN
+ DECLARE IsValid int;
+    IF $ISSAVE=1 THEN
+        BEGIN 
+          select count(*) into IsValid  from parameters a where a.NAME=$NAME and a.ParameterType=$PARAMETERTYPE;
+            IF IsValid=0 THEN
+             INSERT INTO PARAMETERS
+                      (NAME,ACCEPTABLELIMIT,PERMISSABLELIMIT,CREATEDBY,CREATEDON,ParameterType)	
+
+                  VALUES
+                      ($NAME,$ACCEPTABLELIMIT,$PERMISSABLELIMIT,$CREATEDBY,NOW(),$PARAMETERTYPE);
+                       SET $OUTPUT='PARAMETES INSERTED SUCCESSFULLY';
+            ELSE
+               SET $OUTPUT='EXIST';
+            END IF;
+        END;
+    ELSE  
+        BEGIN 
+          select count(*) into IsValid  from parameters a where a.NAME=$NAME and a.ParameterType=$PARAMETERTYPE AND ID!=$ID;
+            IF IsValid=0 THEN
+              UPDATE PARAMETERS SET 
+                      NAME=$NAME,
+                      ACCEPTABLELIMIT=$ACCEPTABLELIMIT,
+                      PERMISSABLELIMIT=$PERMISSABLELIMIT,
+                      MODIFIEDBY=$CREATEDBY,
+                      ParameterType=$PARAMETERTYPE
+              WHERE ID=$ID; 
+              SET $OUTPUT='PARAMETES UPDATED SUCCESSFULLY';
+            ELSE
+                SET $OUTPUT='EXIST';
+            END IF;
+        END;
+    END IF;
+  END;
+DROP PROCEDURE IF EXISTS watermanagementsystem.WMSPARAMTERSELECTION;
+CREATE PROCEDURE watermanagementsystem.`WMSPARAMTERSELECTION`(
+      KEYCODE VARCHAR(20),
+      ID BIGINT 
+  )
+BEGIN
+ SET @ROW_NUMBER = 0;
+      IF KEYCODE='EDIT'  THEN  
+          SELECT ( @ROW_NUMBER := @ROW_NUMBER + 1) AS SerialNo , A.* FROM PARAMETERS A WHERE A.ID=ID;      
+      ELSE 
+          SELECT ( @ROW_NUMBER := @ROW_NUMBER + 1) AS SerialNo , A.* FROM PARAMETERS A where a.Name!='' order by a.id desc;
+      END IF;
+   END;
