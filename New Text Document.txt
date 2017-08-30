@@ -1,0 +1,25 @@
+CREATE TABLE `job_purposedetails` (
+  `Id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `ChallanNo` varchar(200) NOT NULL,
+  `ChallanDetailsId` bigint(20) NOT NULL,
+  `SampleId` bigint(200) DEFAULT NULL,
+  `SampleNo` varchar(200) DEFAULT NULL,
+  `Purpose` varchar(100) NOT NULL,
+  `PurposeParameter` varchar(100) NOT NULL,
+  `NumberOfSample` int(11) DEFAULT NULL,
+  `SampleType` varchar(100) DEFAULT NULL,
+  `Amount` decimal(10,0) DEFAULT NULL,
+  `Active` bit(1) DEFAULT NULL,
+  `CreatedBy` varchar(100) DEFAULT NULL,
+  `CreatedOn` date DEFAULT NULL,
+  `ModifiedBy` varchar(100) DEFAULT NULL,
+  `ModifiedOn` date DEFAULT NULL,
+  `Report` varchar(2000) DEFAULT NULL,
+  `Observation` varchar(200) DEFAULT NULL,
+  `Status` varchar(20) DEFAULT NULL,
+  `TestCommandedOn` date DEFAULT NULL,
+  `Location` varchar(1000) DEFAULT NULL,
+  `TypeOfBuilding` varchar(100) DEFAULT NULL,
+  KEY `PK_Id` (`Id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+
