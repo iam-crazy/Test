@@ -1,3 +1,114 @@
+DROP PROCEDURE IF EXISTS watermanagementsystem.WmsJobResultInsertUpdate;
+CREATE PROCEDURE watermanagementsystem.`WmsJobResultInsertUpdate`(
+$ISSAVE BIT, 
+$ID BIGINT,
+$SampleNumber varchar(200),
+$PARAMETER	VARCHAR(500),
+$RESULT	VARCHAR(100),
+$ACCEPTABLELIMIT	VARCHAR(100),
+$PERMISSABLELIMIT	VARCHAR(100),
+$ParameterId bigint,
+$ChallanNo VARCHAR(100),
+OUT $OUTPUT  VARCHAR(200)
+)
+BEGIN
+   IF $ISSAVE=1 THEN
+        BEGIN 
+              INSERT INTO JOBRESULT
+                  (                     
+                     SampleNumber,
+                     Result,
+                     PermissableLimit,
+                     ParameterId,
+                     Parameter,
+                     ChallanNo,
+                     AcceptableLimit
+                )
+              VALUES
+                  (
+                      $SampleNumber,                     
+                      $RESULT,
+                      $PERMISSABLELIMIT, 
+                      $ParameterId,
+                      $PARAMETER,
+                      $ChallanNo,
+                      $ACCEPTABLELIMIT
+                      
+                  );
+          SET $OUTPUT=LAST_INSERT_ID();
+        END;
+    ELSE  
+        BEGIN 
+            UPDATE  JOBRESULT SET
+                    PARAMETER=$PARAMETER,
+                    RESULT=$RESULT,
+                    ACCEPTABLELIMIT=$ACCEPTABLELIMIT,
+                    PERMISSABLELIMIT=$PERMISSABLELIMIT,
+                    ParameterId=$ParameterId                    
+            WHERE ID=$ID and ChallanNo=$ChallanNo and SampleNumber=$SampleNumber; 
+           SET $OUTPUT=$ID;
+        END;
+    END IF;  
+END;
+
+DROP PROCEDURE IF EXISTS watermanagementsystem.jobresultSelection;
+CREATE PROCEDURE watermanagementsystem.`jobresultSelection`(
+$SampleNumber bigint ,
+$jobTitle varchar(50)
+)
+begin
+Set @jobTitle :='';
+Set @D_jobTitle :='';
+SELECT Purpose   into @jobTitle
+FROM watermanagementsystem.job_sampledeatils 
+where SampleName=$SampleNumber;
+if @D_jobTitle='Construction' then 
+    Set @D_jobTitle :='Construction Purpose';
+elseif @D_jobTitle='Department' then 
+    Set @D_jobTitle :='Analytical Purpose'; 
+elseif @D_jobTitle='Awt' then 
+    Set @D_jobTitle :='Analytical Purpose'; 
+else 
+      Set @D_jobTitle :='Drinking Purpose'; 
+ end if; 
+
+if $jobTitle='NotDefault' then
+    begin
+        SET @ROW_NUMBER = 0;
+        SELECT
+              ( @ROW_NUMBER := @ROW_NUMBER + 1) AS SERIALNO, 
+              a.Id as Id, 
+              a.ParameterId as ParameterId,
+              a.ChallanNo as ChallanNo,
+              a.SampleNumber as SampleNumber,
+              a.Parameter as Name,
+              a.Result as Result,
+              a.AcceptableLimit as AcceptableLimit,
+              a.PermissableLimit as PermissableLimit, 
+              a.JobTitle  as JobTitle 
+        FROM watermanagementsystem.jobresult a 
+        left join watermanagementsystem.parameters b
+        on a.Id=b.Id where a.SampleNumber=$SampleNumber order by b.Id Asc;
+    end;
+    elseif $jobTitle='Default' then
+     begin    
+        SET @ROW_NUMBER = 0;
+          SELECT
+              ( @ROW_NUMBER := @ROW_NUMBER + 1) AS SERIALNO,
+              0 as Id,  
+              a.Id as ParameterId, 
+              '' as ChallanNo,
+              '' as SampleNumber,
+              a.Name as Name, 
+              '' as Result, 
+              a.AcceptableLimit as AcceptableLimit,
+              a.PermissableLimit as PermissableLimit, 
+              '' as JobTitle 
+        FROM watermanagementsystem.parameters a where   a.active  =1 and a.ParameterType =@D_jobTitle;
+    end;
+ END IF;
+ end;
+
 DROP PROCEDURE IF EXISTS watermanagementsystem.JOBSUMMARYSELECTION;
 CREATE PROCEDURE watermanagementsystem.`JOBSUMMARYSELECTION`(
       $KEYCODE VARCHAR(20),
@@ -113,64 +224,6 @@ BEGIN
       END IF;
 END;
 
-DROP PROCEDURE IF EXISTS watermanagementsystem.jobresultSelection;
-CREATE PROCEDURE watermanagementsystem.`jobresultSelection`(
-$SampleNumber bigint ,
-$jobTitle varchar(50)
-)
-begin
-Set @jobTitle :='';
-Set @D_jobTitle :='';
-SELECT Purpose   into @jobTitle
-FROM watermanagementsystem.job_sampledeatils 
-where SampleName=$SampleNumber;
-if @D_jobTitle='Construction' then 
-    Set @D_jobTitle :='Construction Purpose';
-elseif @D_jobTitle='Department' then 
-    Set @D_jobTitle :='Analytical Purpose'; 
-elseif @D_jobTitle='Awt' then 
-    Set @D_jobTitle :='Analytical Purpose'; 
-else 
-      Set @D_jobTitle :='Drinking Purpose'; 
- end if; 
-
-if $jobTitle='NotDefault' then
-    begin
-        SET @ROW_NUMBER = 0;
-        SELECT
-              ( @ROW_NUMBER := @ROW_NUMBER + 1) AS SERIALNO, 
-              a.Id as Id, 
-              a.ParameterId as ParameterId,
-              a.ChallanNo as ChallanNo,
-              a.SampleNumber as SampleNumber,
-              a.Parameter as Name,
-              a.Result as Result,
-              a.AcceptableLimit as AcceptableLimit,
-              a.PermissableLimit as PermissableLimit, 
-              a.JobTitle  as JobTitle 
-        FROM watermanagementsystem.jobresult a 
-        left join watermanagementsystem.parameters b
-        on a.Id=b.Id where a.SampleNumber=$SampleNumber order by b.Id Asc;
-    end;
-    elseif $jobTitle='Default' then
-     begin    
-        SET @ROW_NUMBER = 0;
-          SELECT
-              ( @ROW_NUMBER := @ROW_NUMBER + 1) AS SERIALNO,
-              0 as Id,  
-              a.Id as ParameterId, 
-              '' as ChallanNo,
-              '' as SampleNumber,
-              a.Name as Name, 
-              '' as Result, 
-              a.AcceptableLimit as AcceptableLimit,
-              a.PermissableLimit as PermissableLimit, 
-              '' as JobTitle 
-        FROM watermanagementsystem.parameters a where   a.active  =1 and a.ParameterType =@D_jobTitle;
-    end;
- END IF;
- end;
-
 DROP PROCEDURE IF EXISTS watermanagementsystem.WMSJOBDETAILSINSERTUPDATE;
 CREATE PROCEDURE watermanagementsystem.`WMSJOBDETAILSINSERTUPDATE`(
 $ISSAVE BIT, 
@@ -248,59 +301,6 @@ BEGIN
                     RESULT =$RESULT,
                     REPORT =$REPORT
             WHERE ID=$ID; 
-           SET $OUTPUT=$ID;
-        END;
-    END IF;  
-END;
-
-DROP PROCEDURE IF EXISTS watermanagementsystem.WmsJobResultInsertUpdate;
-CREATE PROCEDURE watermanagementsystem.`WmsJobResultInsertUpdate`(
-$ISSAVE BIT, 
-$ID BIGINT,
-$SampleNumber varchar(200),
-$PARAMETER	VARCHAR(500),
-$RESULT	VARCHAR(100),
-$ACCEPTABLELIMIT	VARCHAR(100),
-$PERMISSABLELIMIT	VARCHAR(100),
-$ParameterId bigint,
-$ChallanNo VARCHAR(100),
-OUT $OUTPUT  VARCHAR(200)
-)
-BEGIN
-   IF $ISSAVE=1 THEN
-        BEGIN 
-              INSERT INTO JOBRESULT
-                  (                     
-                     SampleNumber,
-                     Result,
-                     PermissableLimit,
-                     ParameterId,
-                     Parameter,
-                     ChallanNo,
-                     AcceptableLimit
-                )
-              VALUES
-                  (
-                      $SampleNumber,                     
-                      $RESULT,
-                      $PERMISSABLELIMIT, 
-                      $ParameterId,
-                      $PARAMETER,
-                      $ChallanNo,
-                      $ACCEPTABLELIMIT
-                      
-                  );
-          SET $OUTPUT=LAST_INSERT_ID();
-        END;
-    ELSE  
-        BEGIN 
-            UPDATE  JOBRESULT SET
-                    PARAMETER=$PARAMETER,
-                    RESULT=$RESULT,
-                    ACCEPTABLELIMIT=$ACCEPTABLELIMIT,
-                    PERMISSABLELIMIT=$PERMISSABLELIMIT,
-                    ParameterId=$ParameterId                    
-            WHERE ID=$ID and ChallanNo=$ChallanNo and SampleNumber=$SampleNumber; 
            SET $OUTPUT=$ID;
         END;
     END IF;  
