@@ -1,4 +1,10 @@
+https://www.codeproject.com/Articles/827984/Generically-Populate-List-of-Objects-from-SqlDataR
+
+
+
+
 http://structurepress.chillyorange.com/index.html
+
 
 
 https://www.microsoft.com/en-us/download/details.aspx?id=35580
