@@ -1,0 +1,797 @@
+USE [Web_TallyDB]
+GO
+/****** Object:  StoredProcedure [dbo].[DashboardReceivableMonthlyChart]    Script Date: 07-11-2017 23:34:11 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[DashboardReceivableMonthlyChart]
+(	
+	@Key varchar(100),
+	@CompanyName varchar(100),	
+	@FinYear varchar(20),
+	@AgeCat varchar(20),
+	@Customer varchar(100)
+)
+AS 
+BEGIN
+	DECLARE @FILTER_QUERY NVARCHAR(MAX)=
+		(
+			CASE @Key 
+				WHEN 'CompanyName' THEN 'WHERE  A.CompName =' + @CompanyName 
+				WHEN 'FinYear' THEN 'WHERE  A.FinYear =' + @FinYear 
+				WHEN 'Customer' THEN 'WHERE  A.LName =' + @Customer 
+				WHEN 'AgeCat' THEN 'WHERE  A.AgeCat =' + @AgeCat 
+				WHEN 'CompanyWithFinYear' THEN 'WHERE  A.CompName =' + @CompanyName +' and A.FinYear =' + @FinYear
+				WHEN 'CompanyWithCustomer' THEN 'WHERE  A.CompName =' + @CompanyName +' and A.LName =' + @Customer
+				WHEN 'CompanyWithAgeCat' THEN 'WHERE  A.CompName =' + @CompanyName +' and A.AgeCat =' + @AgeCat
+				WHEN 'FinYearWithCustomer' THEN 'WHERE  A.FinYear =' + @FinYear +' and A.LName =' + @Customer
+				WHEN 'FinYearWithAgeCat' THEN 'WHERE  A.FinYear =' + @FinYear +' and A.AgeCat =' + @AgeCat
+				WHEN 'CustomerWithAgeCat' THEN 'WHERE  A.LName =' + @Customer +' and A.AgeCat =' + @AgeCat
+				WHEN 'CompanyWithFinYearCustomer' THEN 
+					'WHERE  A.FinYear =' + @FinYear +' and A.LName =' + @Customer+' and A.CompName =' + @CompanyName+
+					' and A.LName =' + @Customer
+				WHEN 'CompanyWithFinYearAgeCat' THEN 
+					'WHERE  A.FinYear =' + @FinYear +' and A.LName =' + @Customer+' and A.CompName =' + @CompanyName+
+					' and A.AgeCat =' + @AgeCat
+				WHEN 'CustomerWithFinYearAgeCat' THEN 
+					'WHERE  A.FinYear =' + @FinYear +' and A.LName =' + @Customer+' and A.LName =' + @Customer+
+					' and A.AgeCat =' + @AgeCat				
+				WHEN 'All' THEN 
+					'WHERE  A.FinYear =' + @FinYear +' and A.LName =' + @Customer+
+					' and A.CompName =' + @CompanyName +' and A.AgeCat =' + @AgeCat				
+				ELSE ' '
+			END
+		);
+	DECLARE @BASIC_QUERY NVARCHAR(MAX)=
+				'SELECT * FROM 
+				 ( select  
+						format(BillDt,''MMM'') as Name,
+						Month(BillDt) as MonthValue,
+						SUM(OpBal) as  Value
+					from [dbo].[Rep_Receivables] A '+ @FILTER_QUERY+' 
+					group by format(BillDt,''MMM'') , Month(BillDt)
+				)B order by MonthValue asc';
+	EXEC sp_executesql @BASIC_QUERY;	
+END;
+
+GO
+/****** Object:  StoredProcedure [dbo].[DashboardReceivableSelection]    Script Date: 07-11-2017 23:34:12 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[DashboardReceivableSelection](
+@Key VARCHAR(20),
+@CompanyName VARCHar(100)=NULL,
+@FinYear VARCHAR(20)=NULL,
+@Customer VARCHAR(20)=NULL,
+@AgeCat varchar(20)=NULL,
+@Page BIGINT ,
+@PageSize  BIGINT,
+@Sort VARCHAR(40),
+@SortDir VARCHAR(5),
+@P_RECORD_COUNT BIGINT OUTPUT
+)
+AS
+	BEGIN	
+	--exec AH_SELLER_USER_SELECTION 'PAGE_LOAD','','','',1,10,'BillDt','ASC',1;	
+
+		DECLARE @FILTER_QUERY NVARCHAR(MAX)=
+		(
+			CASE @Key 
+				WHEN 'CompanyName' THEN 'WHERE  A.CompName =' + @CompanyName 
+				WHEN 'FinYear' THEN 'WHERE  A.FinYear =' + @FinYear 
+				WHEN 'Customer' THEN 'WHERE  A.LName =' + @Customer 
+				WHEN 'AgeCat' THEN 'WHERE  A.AgeCat =' + @AgeCat 
+				WHEN 'CompanyWithFinYear' THEN 'WHERE  A.CompName =' + @CompanyName +' and A.FinYear =' + @FinYear
+				WHEN 'CompanyWithCustomer' THEN 'WHERE  A.CompName =' + @CompanyName +' and A.LName =' + @Customer
+				WHEN 'CompanyWithAgeCat' THEN 'WHERE  A.CompName =' + @CompanyName +' and A.AgeCat =' + @AgeCat
+				WHEN 'FinYearWithCustomer' THEN 'WHERE  A.FinYear =' + @FinYear +' and A.LName =' + @Customer
+				WHEN 'FinYearWithAgeCat' THEN 'WHERE  A.FinYear =' + @FinYear +' and A.AgeCat =' + @AgeCat
+				WHEN 'CustomerWithAgeCat' THEN 'WHERE  A.LName =' + @Customer +' and A.AgeCat =' + @AgeCat
+				WHEN 'CompanyWithFinYearCustomer' THEN 
+					'WHERE  A.FinYear =' + @FinYear +' and A.LName =' + @Customer+' and A.CompName =' + @CompanyName+
+					' and A.LName =' + @Customer
+				WHEN 'CompanyWithFinYearAgeCat' THEN 
+					'WHERE  A.FinYear =' + @FinYear +' and A.LName =' + @Customer+' and A.CompName =' + @CompanyName+
+					' and A.AgeCat =' + @AgeCat
+				WHEN 'CustomerWithFinYearAgeCat' THEN 
+					'WHERE  A.FinYear =' + @FinYear +' and A.LName =' + @Customer+' and A.LName =' + @Customer+
+					' and A.AgeCat =' + @AgeCat				
+				WHEN 'All' THEN 
+					'WHERE  A.FinYear =' + @FinYear +' and A.LName =' + @Customer+
+					' and A.CompName =' + @CompanyName +' and A.AgeCat =' + @AgeCat				
+				ELSE ' '
+			END
+		);
+
+		--
+		DECLARE @BASIC_QUERY NVARCHAR(MAX)=
+				'SELECT * FROM 
+				 ( SELECT 
+					ROW_NUMBER() OVER(ORDER BY '+@Sort+' '+@SortDir+ ' ) AS SNO, 
+					BillDt,
+					BName,
+					LName, 
+					OpBal, 
+					ClBal,
+					BillDueOn,
+					BillOverDue   
+				FROM Rep_Receivables A '+ @FILTER_QUERY+' 
+				)B ';
+		 
+		DECLARE @INDEX_QUERY NVARCHAR(MAX)=' WHERE  (CAST(B.SNO AS bigint)  BETWEEN @START_INDEX AND  @END_INDEX )'		
+		DECLARE @RESULT NVARCHAR(MAX)=@BASIC_QUERY+@INDEX_QUERY;		
+		DECLARE @START_INDEX BIGINT=((@Page -1) * @PageSize + 1);
+		DECLARE @END_INDEX BIGINT=((((@Page -1) * @PageSize + 1) + @PageSize) - 1);
+
+		EXEC sp_executesql @RESULT, N'@START_INDEX BIGINT,@END_INDEX BIGINT', @START_INDEX,@END_INDEX
+
+		DECLARE @BASIC_QUERY_COUNT NVARCHAR(MAX)='';	
+		SET @BASIC_QUERY_COUNT='SELECT @cnt=count(*) from Rep_Receivables A ';
+
+		DECLARE @RESULT_COUNT NVARCHAR(MAX)=@BASIC_QUERY_COUNT+@FILTER_QUERY;		
+		EXECUTE sp_executesql @RESULT_COUNT, N'@cnt BIGINT OUTPUT', @cnt=@P_RECORD_COUNT OUTPUT;
+	END;
+GO
+/****** Object:  StoredProcedure [dbo].[DashboardReceivableTileDetails]    Script Date: 07-11-2017 23:34:12 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[DashboardReceivableTileDetails]
+(	
+	@Key varchar(100),
+	@CompanyName varchar(100),
+	@FinYear varchar(20),
+	@AgeCat varchar(20),
+	@Customer varchar(100)
+)
+AS 
+BEGIN
+	DECLARE @Total decimal=0;
+	DECLARE @TopCustomerTotal decimal=0;
+	DECLARE @CurrentMonthTotal decimal=0;
+	DECLARE @TopProductTotal decimal=0;
+	DECLARE @TopCustomer varchar(400)='';
+	DECLARE @TopProduct varchar(400)='';
+	
+	DECLARE @FILTER_QUERY NVARCHAR(MAX)=
+	(
+		CASE @Key 
+			WHEN 'CompanyName' THEN 'WHERE  A.CompName =' + @CompanyName 
+			WHEN 'FinYear' THEN 'WHERE  A.FinYear =' + @FinYear 
+			WHEN 'Customer' THEN 'WHERE  A.LName =' + @Customer 
+			WHEN 'AgeCat' THEN 'WHERE  A.AgeCat =' + @AgeCat 
+			WHEN 'CompanyWithFinYear' THEN 'WHERE  A.CompName =' + @CompanyName +' and A.FinYear =' + @FinYear
+			WHEN 'CompanyWithCustomer' THEN 'WHERE  A.CompName =' + @CompanyName +' and A.LName =' + @Customer
+			WHEN 'CompanyWithAgeCat' THEN 'WHERE  A.CompName =' + @CompanyName +' and A.AgeCat =' + @AgeCat
+			WHEN 'FinYearWithCustomer' THEN 'WHERE  A.FinYear =' + @FinYear +' and A.LName =' + @Customer
+			WHEN 'FinYearWithAgeCat' THEN 'WHERE  A.FinYear =' + @FinYear +' and A.AgeCat =' + @AgeCat
+			WHEN 'CustomerWithAgeCat' THEN 'WHERE  A.LName =' + @Customer +' and A.AgeCat =' + @AgeCat
+			WHEN 'CompanyWithFinYearCustomer' THEN 
+				'WHERE  A.FinYear =' + @FinYear +' and A.LName =' + @Customer+' and A.CompName =' + @CompanyName+
+				' and A.LName =' + @Customer
+			WHEN 'CompanyWithFinYearAgeCat' THEN 
+				'WHERE  A.FinYear =' + @FinYear +' and A.LName =' + @Customer+' and A.CompName =' + @CompanyName+
+				' and A.AgeCat =' + @AgeCat
+			WHEN 'CustomerWithFinYearAgeCat' THEN 
+				'WHERE  A.FinYear =' + @FinYear +' and A.LName =' + @Customer+' and A.LName =' + @Customer+
+				' and A.AgeCat =' + @AgeCat				
+			WHEN 'All' THEN 
+				'WHERE  A.FinYear =' + @FinYear +' and A.LName =' + @Customer+
+				' and A.CompName =' + @CompanyName +' and A.AgeCat =' + @AgeCat				
+			ELSE ' '
+			END
+		);
+
+		DECLARE @Total_QUERY NVARCHAR(MAX)='SELECT @cnt1=ISNULL(sum(A.OpBal),0) from Rep_Receivables A '+ @FILTER_QUERY;		
+		EXECUTE sp_executesql @Total_QUERY, N'@cnt1 decimal output', @cnt1=@Total output;
+		
+		DECLARE @TopCustomer_QUERY NVARCHAR(MAX)='select top 1 @cnt2= ISNULL(A.LName,''''),@cnt3= ISNULL(sum(A.OpBal),0) 
+			from [dbo].Rep_Receivables A ' +@FILTER_QUERY + ' group by A.LName  order by SUM(A.OpBal) desc ';		
+		EXECUTE sp_executesql @TopCustomer_QUERY, N'@cnt2 varchar(400) output,@cnt3 decimal output', @cnt2=@TopCustomer output,@cnt3=@TopCustomerTotal output;
+		
+		DECLARE @CurrentMonthTotal_QUERY NVARCHAR(MAX)='select 	@cnt4=ISNULL(sum(A.OpBal),0) from [dbo].Rep_Receivables A
+			where Month(A.BillDt)=Month(GetDate())';		
+		EXECUTE sp_executesql @CurrentMonthTotal_QUERY, N'@cnt4 decimal output', @cnt4=@CurrentMonthTotal output;
+		
+		DECLARE @TopProduct_QUERY NVARCHAR(MAX)='select top 1 @cnt5 = ISNULL(A.BName,''''),@cnt6 =ISNULL(sum(A.OpBal),0)
+			from [dbo].Rep_Receivables A ' +@FILTER_QUERY+ '  group by A.BName  order by SUM(A.OpBal) desc';		
+		EXECUTE sp_executesql @TopProduct_QUERY, N'@cnt5 varchar(400) output,@cnt6 decimal output', @cnt5=@TopProduct output,@cnt6=@TopProductTotal output;
+		Select 
+			 @Total  as Total,
+			 @TopCustomerTotal  as TopCustomerTotal,
+			 @CurrentMonthTotal as CurrentMonthTotal,
+			 @TopProductTotal as TopProductTotal,
+			 @TopCustomer  as TopCustomer,
+			 @TopProduct  as TopProduct;
+END;
+
+GO
+/****** Object:  StoredProcedure [dbo].[DashboardReceivableTopCustomerChart]    Script Date: 07-11-2017 23:34:12 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[DashboardReceivableTopCustomerChart]
+(	
+	@Key varchar(100),
+	@CompanyName varchar(100),
+	@FinYear varchar(20),
+	@AgeCat varchar(20),
+	@Customer varchar(100)
+)
+AS 
+BEGIN
+
+	DECLARE @FILTER_QUERY NVARCHAR(MAX)=
+	(
+		CASE @Key 
+			WHEN 'CompanyName' THEN 'WHERE  A.CompName =' + @CompanyName 
+			WHEN 'FinYear' THEN 'WHERE  A.FinYear =' + @FinYear 
+			WHEN 'Customer' THEN 'WHERE  A.LName =' + @Customer 
+			WHEN 'AgeCat' THEN 'WHERE  A.AgeCat =' + @AgeCat 
+			WHEN 'CompanyWithFinYear' THEN 'WHERE  A.CompName =' + @CompanyName +' and A.FinYear =' + @FinYear
+			WHEN 'CompanyWithCustomer' THEN 'WHERE  A.CompName =' + @CompanyName +' and A.LName =' + @Customer
+			WHEN 'CompanyWithAgeCat' THEN 'WHERE  A.CompName =' + @CompanyName +' and A.AgeCat =' + @AgeCat
+			WHEN 'FinYearWithCustomer' THEN 'WHERE  A.FinYear =' + @FinYear +' and A.LName =' + @Customer
+			WHEN 'FinYearWithAgeCat' THEN 'WHERE  A.FinYear =' + @FinYear +' and A.AgeCat =' + @AgeCat
+			WHEN 'CustomerWithAgeCat' THEN 'WHERE  A.LName =' + @Customer +' and A.AgeCat =' + @AgeCat
+			WHEN 'CompanyWithFinYearCustomer' THEN 
+				'WHERE  A.FinYear =' + @FinYear +' and A.LName =' + @Customer+' and A.CompName =' + @CompanyName+
+				' and A.LName =' + @Customer
+			WHEN 'CompanyWithFinYearAgeCat' THEN 
+				'WHERE  A.FinYear =' + @FinYear +' and A.LName =' + @Customer+' and A.CompName =' + @CompanyName+
+				' and A.AgeCat =' + @AgeCat
+			WHEN 'CustomerWithFinYearAgeCat' THEN 
+				'WHERE  A.FinYear =' + @FinYear +' and A.LName =' + @Customer+' and A.LName =' + @Customer+
+				' and A.AgeCat =' + @AgeCat				
+			WHEN 'All' THEN 
+				'WHERE  A.FinYear =' + @FinYear +' and A.LName =' + @Customer+
+				' and A.CompName =' + @CompanyName +' and A.AgeCat =' + @AgeCat				
+			ELSE ' '
+			END
+		);
+
+	DECLARE @BASIC_QUERY NVARCHAR(MAX)=
+				'SELECT top 10 *  FROM 
+				 ( select  
+						LName as Name,
+						SUM(OpBal) as  Value
+					from [dbo].[Rep_Receivables] A '+ @FILTER_QUERY+' 
+					group by LName					
+				)B order by Value Desc';
+
+	EXEC sp_executesql @BASIC_QUERY;	
+END;
+
+GO
+/****** Object:  StoredProcedure [dbo].[DashboardSalesRegisterMonthlyChart]    Script Date: 07-11-2017 23:34:12 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[DashboardSalesRegisterMonthlyChart]
+(
+	@Key varchar(100),
+	@CompanyName varchar(100),
+	@FinYear varchar(20)
+)
+AS 
+BEGIN
+	DECLARE @FILTER_QUERY NVARCHAR(MAX)=
+		(
+			CASE @Key 
+				WHEN 'CompanyName' THEN 'WHERE  A.compName =' + @CompanyName 
+				WHEN 'FinYear' THEN 'WHERE  A.FinYear =' + @FinYear 
+				WHEN 'All' THEN 'WHERE  A.FinYear =' + @FinYear +' and A.CompName =' + @CompanyName
+				ELSE ' '
+			END
+		);
+	DECLARE @BASIC_QUERY NVARCHAR(MAX)=
+				'SELECT * FROM 
+				 ( select  
+						format(Date,''MMM'') as Name,
+						Month(Date) as MonthValue,
+						SUM(Amt) as  Value
+					from [dbo].[Rep_SalesReg] A '+ @FILTER_QUERY+' 
+					group by format(Date,''MMM'') , Month(Date)
+				)B order by MonthValue asc';
+	EXEC sp_executesql @BASIC_QUERY;		
+END;
+
+GO
+/****** Object:  StoredProcedure [dbo].[DashboardSalesRegisterSelection]    Script Date: 07-11-2017 23:34:12 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[DashboardSalesRegisterSelection](
+@Key VARCHAR(20),
+@CompanyName VARCHar(100)=NULL,
+@FinYear VARCHAR(20)=NULL,
+@Page BIGINT ,
+@PageSize  BIGINT,
+@Sort VARCHAR(40),
+@SortDir VARCHAR(5),
+@P_RECORD_COUNT BIGINT OUTPUT
+)
+AS
+	BEGIN	
+	--exec AH_SELLER_USER_SELECTION 'PAGE_LOAD','','','',1,10,'BillDt','ASC',1;	
+
+	DECLARE @FILTER_QUERY NVARCHAR(MAX)=
+		(
+			CASE @Key 
+				WHEN 'CompanyName' THEN 'WHERE  A.CName like ''%' + @CompanyName + '%'''				
+				WHEN 'FinYear' THEN 'WHERE  A.FinYear ='+@FinYear					
+				WHEN 'All' THEN 'A.CName like ''%' + @CompanyName + '%''
+				AND A.FinYear ='+@FinYear	
+				ELSE ''
+			END
+		);
+		--
+		DECLARE @BASIC_QUERY NVARCHAR(MAX)=
+				'SELECT * FROM 
+					 ( SELECT 
+						ROW_NUMBER() OVER(ORDER BY '+@Sort+' '+@SortDir+ ' ) AS SNO, 
+						Date,
+						VNo,
+						VType,
+						LName,
+						Parent,
+						SName,
+						AQty,
+						UOM,
+						DiscPerc,
+						Amt   
+					FROM Rep_SalesReg A '+ @FILTER_QUERY+' 
+				)B ';
+		 
+		DECLARE @INDEX_QUERY NVARCHAR(MAX)=' WHERE  (CAST(B.SNO AS bigint)  BETWEEN @START_INDEX AND  @END_INDEX )'		
+		DECLARE @RESULT NVARCHAR(MAX)=@BASIC_QUERY+@INDEX_QUERY;		
+		DECLARE @START_INDEX BIGINT=((@Page -1) * @PageSize + 1);
+		DECLARE @END_INDEX BIGINT=((((@Page -1) * @PageSize + 1) + @PageSize) - 1);
+
+		EXEC sp_executesql @RESULT, N'@START_INDEX BIGINT,@END_INDEX BIGINT', @START_INDEX,@END_INDEX
+
+		DECLARE @BASIC_QUERY_COUNT NVARCHAR(MAX)='';	
+		SET @BASIC_QUERY_COUNT='SELECT @cnt=count(*) from Rep_SalesReg A ';
+
+		DECLARE @RESULT_COUNT NVARCHAR(MAX)=@BASIC_QUERY_COUNT+@FILTER_QUERY;		
+		EXECUTE sp_executesql @RESULT_COUNT, N'@cnt BIGINT OUTPUT', @cnt=@P_RECORD_COUNT OUTPUT;
+	END;
+GO
+/****** Object:  StoredProcedure [dbo].[DashboardSalesRegisterTileDetails]    Script Date: 07-11-2017 23:34:12 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[DashboardSalesRegisterTileDetails]
+(	
+	@Key varchar(100),
+	@CompanyName varchar(100),
+	@FinYear varchar(20)
+)
+AS 
+BEGIN
+	DECLARE @Total decimal=0;
+	DECLARE @TopCustomerTotal decimal=0;
+	DECLARE @CurrentMonthTotal decimal=0;
+	DECLARE @TopProductTotal decimal=0;
+	DECLARE @TopCustomer varchar(400)='';
+	DECLARE @TopProduct varchar(400)='';
+	DECLARE @FILTER_QUERY NVARCHAR(MAX)=
+		(
+			CASE @Key 
+				WHEN 'CompanyName' THEN 'WHERE  A.compName =' + @CompanyName 
+				WHEN 'FinYear' THEN 'WHERE  A.FinYear =' + @FinYear 
+				WHEN 'All' THEN 'WHERE  A.FinYear =' + @FinYear +' and A.CompName =' + @CompanyName
+				ELSE ' '
+			END
+		);
+		DECLARE @Total_QUERY NVARCHAR(MAX)='SELECT @cnt1=ISNULL(sum(A.Amt),0) from Rep_SalesReg A '+ @FILTER_QUERY;		
+		EXECUTE sp_executesql @Total_QUERY, N'@cnt1 decimal output', @cnt1=@Total output;
+		
+		DECLARE @TopCustomer_QUERY NVARCHAR(MAX)='select top 1 @cnt2= ISNULL(A.partyName,''''),@cnt3= ISNULL(sum(A.Amt),0) 
+			from [dbo].Rep_SalesReg A ' +@FILTER_QUERY + ' group by A.partyName  order by SUM(A.Amt) desc ';		
+		EXECUTE sp_executesql @TopCustomer_QUERY, N'@cnt2 varchar(400) output,@cnt3 decimal output', @cnt2=@TopCustomer output,@cnt3=@TopCustomerTotal output;
+		
+		DECLARE @CurrentMonthTotal_QUERY NVARCHAR(MAX)='select 	@cnt4=ISNULL(sum(A.Amt),0) from [dbo].Rep_SalesReg A
+			where Month(A.Date)=Month(GetDate())';		
+		EXECUTE sp_executesql @CurrentMonthTotal_QUERY, N'@cnt4 decimal output', @cnt4=@CurrentMonthTotal output;
+		
+		DECLARE @TopProduct_QUERY NVARCHAR(MAX)='select top 1 @cnt5 = ISNULL(A.SName,''''),@cnt6 =ISNULL(sum(A.Amt),0)
+			from [dbo].Rep_SalesReg A ' +@FILTER_QUERY+ '  group by A.SName  order by SUM(A.Amt) desc';		
+		EXECUTE sp_executesql @TopProduct_QUERY, N'@cnt5 varchar(400) output,@cnt6 decimal output', @cnt5=@TopProduct output,@cnt6=@TopProductTotal output;
+		Select 
+			 @Total  as Total,
+			 @TopCustomerTotal  as TopCustomerTotal,
+			 @CurrentMonthTotal as CurrentMonthTotal,
+			 @TopProductTotal as TopProductTotal,
+			 @TopCustomer  as TopCustomer,
+			 @TopProduct  as TopProduct;
+END;
+
+GO
+/****** Object:  StoredProcedure [dbo].[DashboardSalesRegisterTopCustomerChart]    Script Date: 07-11-2017 23:34:12 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[DashboardSalesRegisterTopCustomerChart]
+(
+	@Key varchar(100),
+	@CompanyName varchar(100),
+	@FinYear varchar(20)
+)
+AS 
+BEGIN
+	DECLARE @FILTER_QUERY NVARCHAR(MAX)=
+		(
+			CASE @Key 
+				WHEN 'CompanyName' THEN 'WHERE  A.compName =' + @CompanyName 
+				WHEN 'FinYear' THEN 'WHERE  A.FinYear =' + @FinYear 
+				WHEN 'All' THEN 'WHERE  A.FinYear =' + @FinYear +' and A.CompName =' + @CompanyName
+				ELSE ' '
+			END
+		);
+	DECLARE @BASIC_QUERY NVARCHAR(MAX)=
+				'SELECT top 10 *  FROM 
+				 ( select  
+						partyName as Name,
+						SUM(Amt) as  Value
+					from [dbo].[Rep_SalesReg] A '+ @FILTER_QUERY+' 
+					group by partyName
+				)B order by Value Desc';
+	EXEC sp_executesql @BASIC_QUERY;		
+END;
+
+GO
+/****** Object:  StoredProcedure [dbo].[GeneralCode]    Script Date: 07-11-2017 23:34:12 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE Procedure [dbo].[GeneralCode]
+(
+	@KeyCode varchar(40)
+)
+AS
+BEGIN
+	IF @KeyCode='ReceivableCName' 
+		BEGIN
+			select * from 
+			(
+				select 
+					0 as Id ,
+					'All' as Name 
+				union
+				select 
+					ROW_NUMBER() OVER(ORDER BY b.CompName ASC) as Id,
+					CompName as Name
+				from
+					(
+						Select  
+							Distinct CompName 
+						from Rep_Receivables
+					) b
+			) c order by c.Id asc;
+		END;
+	Else IF @KeyCode='ReceivableFinYr' 
+		BEGIN
+			select * from 
+			(
+				select 
+					0 as Id ,
+					'All' as Name 
+				union
+				select 
+					ROW_NUMBER() OVER(ORDER BY b.FinYr  ASC) as Id,
+					FinYr as Name
+				from
+					(
+						Select  
+							Distinct FinYr  
+						from Rep_Receivables
+					) b
+			) c order by c.Id asc ;
+		END;
+	Else IF @KeyCode='ReceivableLName' 
+		BEGIN
+			select * from 
+			(
+				select 
+					0 as Id ,
+					'All' as Name  
+				union
+				select 
+					ROW_NUMBER() OVER(ORDER BY b.LName  ASC) as Id,
+					LName as Name
+				from
+					(
+						Select  
+							Distinct LName  
+						from Rep_Receivables
+					) b
+			) c order by c.Id asc ;
+		END;
+	Else IF @KeyCode='ReceivableAgeCat' 
+		BEGIN
+			select * from 
+			(
+				select 
+					0 as Id ,
+					'All'  as Name
+				union
+				select 
+					ROW_NUMBER() OVER(ORDER BY b.AgeCat  ASC) as Id,
+					AgeCat  as Name
+				from
+					(
+						Select  
+							Distinct AgeCat  
+						from Rep_Receivables
+					) b
+			) c order by c.Id asc ;
+		END;
+	Else IF @KeyCode='SalesRegisterCName' 
+		BEGIN
+			select * from 
+			(
+				select 
+					0 as Id ,
+					'All'  as Name
+				union
+				select 
+					ROW_NUMBER() OVER(ORDER BY b.CompName ASC) as Id,
+					CompName as Name
+				from
+					(
+						Select  
+							Distinct CompName 
+						from Rep_SalesReg
+					) b
+			) c order by c.Id asc;
+		END;
+	Else IF @KeyCode='SalesRegisterFinYr' 
+		BEGIN
+			select * from 
+			(
+				select 
+					0 as Id ,
+					'All'  as Name
+				union
+				select 
+					ROW_NUMBER() OVER(ORDER BY b.FinYr  ASC) as Id,
+					FinYr as Name
+				from
+					(
+						Select  
+							Distinct FinYr  
+						from Rep_SalesReg
+					) b
+			) c order by c.Id asc ;
+		END;
+END;
+GO
+/****** Object:  StoredProcedure [dbo].[ReportPayablesSelection]    Script Date: 07-11-2017 23:34:12 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[ReportPayablesSelection](
+@Key VARCHAR(20),
+@Code VARCHar(100)=NULL,
+@FromDate VARCHAR(20)=NULL,
+@ToDate VARCHAR(20)=NULL,
+@Page BIGINT ,
+@PageSize  BIGINT,
+@Sort VARCHAR(40),
+@SortDir VARCHAR(5),
+@P_RECORD_COUNT BIGINT OUTPUT
+)
+AS
+	BEGIN	
+	--exec Report_Receivables_Selection 'PAGE_LOAD','','','',1,10,'BillDt','ASC',1;	
+
+	DECLARE @FILTER_QUERY NVARCHAR(MAX)=
+		(
+			CASE @Key 
+				WHEN 'CODE' THEN 'WHERE  A.BName like ''%' + @Code + '%'''
+				WHEN 'ALL' THEN 'WHERE  A.BName like ''%' + @Code + '%''
+				AND ( CONVERT(datetime,( CONVERT(VARCHAR(10),
+				 (CONVERT(DATETIME,A.BillDt,103)),103)),103) 
+				 BETWEEN (CONVERT(DATETIME,'''+@FromDate+''',103))  
+				 AND (CONVERT(DATETIME,'''+@ToDate+''',103)))'
+				WHEN 'DATE' THEN 'WHERE ( CONVERT(datetime,( CONVERT(VARCHAR(10),
+				 (CONVERT(DATETIME,A.BillDt,103)),103)),103) 
+				 BETWEEN (CONVERT(DATETIME,'''+@FromDate+''',103))  
+				 AND (CONVERT(DATETIME,'''+@ToDate+''',103))) '				
+				ELSE ' '
+			END
+		);
+		--
+		DECLARE @BASIC_QUERY NVARCHAR(MAX)=
+				'SELECT * FROM 
+				 ( SELECT 
+					ROW_NUMBER() OVER(ORDER BY '+@Sort+' '+@SortDir+ ' ) AS SNO, 
+					BillDt,
+					BName,
+					LName, 
+					OpBal, 
+					ClBal,
+					BillDueOn,
+					BillOverDue   
+				FROM Rep_Payables A '+ @FILTER_QUERY+' 
+				)B ';
+		 
+		DECLARE @INDEX_QUERY NVARCHAR(MAX)=' WHERE  (CAST(B.SNO AS bigint)  BETWEEN @START_INDEX AND  @END_INDEX )'		
+		DECLARE @RESULT NVARCHAR(MAX)=@BASIC_QUERY+@INDEX_QUERY;		
+		DECLARE @START_INDEX BIGINT=((@Page -1) * @PageSize + 1);
+		DECLARE @END_INDEX BIGINT=((((@Page -1) * @PageSize + 1) + @PageSize) - 1);
+
+		EXEC sp_executesql @RESULT, N'@START_INDEX BIGINT,@END_INDEX BIGINT', @START_INDEX,@END_INDEX
+
+		DECLARE @BASIC_QUERY_COUNT NVARCHAR(MAX)='';	
+		SET @BASIC_QUERY_COUNT='SELECT @cnt=count(*) from Rep_Payables A ';
+
+		DECLARE @RESULT_COUNT NVARCHAR(MAX)=@BASIC_QUERY_COUNT+@FILTER_QUERY;		
+		EXECUTE sp_executesql @RESULT_COUNT, N'@cnt BIGINT OUTPUT', @cnt=@P_RECORD_COUNT OUTPUT;
+	END;
+GO
+/****** Object:  StoredProcedure [dbo].[ReportReceivablesSelection]    Script Date: 07-11-2017 23:34:12 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[ReportReceivablesSelection](
+@Key VARCHAR(20),
+@Code VARCHar(100)=NULL,
+@FromDate VARCHAR(20)=NULL,
+@ToDate VARCHAR(20)=NULL,
+@Page BIGINT ,
+@PageSize  BIGINT,
+@Sort VARCHAR(40),
+@SortDir VARCHAR(5),
+@P_RECORD_COUNT BIGINT OUTPUT
+)
+AS
+	BEGIN	
+	--exec AH_SELLER_USER_SELECTION 'PAGE_LOAD','','','',1,10,'BillDt','ASC',1;	
+
+	DECLARE @FILTER_QUERY NVARCHAR(MAX)=
+		(
+			CASE @Key 
+				WHEN 'CODE' THEN 'WHERE  A.BName like ''%' + @Code + '%'''
+				WHEN 'ALL' THEN 'WHERE  A.BName like ''%' + @Code + '%''
+				AND ( CONVERT(datetime,( CONVERT(VARCHAR(10),
+				 (CONVERT(DATETIME,A.BillDt,103)),103)),103) 
+				 BETWEEN (CONVERT(DATETIME,'''+@FromDate+''',103))  
+				 AND (CONVERT(DATETIME,'''+@ToDate+''',103)))'
+				WHEN 'DATE' THEN 'WHERE ( CONVERT(datetime,( CONVERT(VARCHAR(10),
+				 (CONVERT(DATETIME,A.BillDt,103)),103)),103) 
+				 BETWEEN (CONVERT(DATETIME,'''+@FromDate+''',103))  
+				 AND (CONVERT(DATETIME,'''+@ToDate+''',103))) '				
+				ELSE ' '
+			END
+		);
+		--
+		DECLARE @BASIC_QUERY NVARCHAR(MAX)=
+				'SELECT * FROM 
+				 ( SELECT 
+					ROW_NUMBER() OVER(ORDER BY '+@Sort+' '+@SortDir+ ' ) AS SNO, 
+					BillDt,
+					BName,
+					LName, 
+					OpBal, 
+					ClBal,
+					BillDueOn,
+					BillOverDue   
+				FROM Rep_Receivables A '+ @FILTER_QUERY+' 
+				)B ';
+		 
+		DECLARE @INDEX_QUERY NVARCHAR(MAX)=' WHERE  (CAST(B.SNO AS bigint)  BETWEEN @START_INDEX AND  @END_INDEX )'		
+		DECLARE @RESULT NVARCHAR(MAX)=@BASIC_QUERY+@INDEX_QUERY;		
+		DECLARE @START_INDEX BIGINT=((@Page -1) * @PageSize + 1);
+		DECLARE @END_INDEX BIGINT=((((@Page -1) * @PageSize + 1) + @PageSize) - 1);
+
+		EXEC sp_executesql @RESULT, N'@START_INDEX BIGINT,@END_INDEX BIGINT', @START_INDEX,@END_INDEX
+
+		DECLARE @BASIC_QUERY_COUNT NVARCHAR(MAX)='';	
+		SET @BASIC_QUERY_COUNT='SELECT @cnt=count(*) from Rep_Receivables A ';
+
+		DECLARE @RESULT_COUNT NVARCHAR(MAX)=@BASIC_QUERY_COUNT+@FILTER_QUERY;		
+		EXECUTE sp_executesql @RESULT_COUNT, N'@cnt BIGINT OUTPUT', @cnt=@P_RECORD_COUNT OUTPUT;
+	END;
+GO
+/****** Object:  StoredProcedure [dbo].[ReportSalesRegisterSelection]    Script Date: 07-11-2017 23:34:12 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[ReportSalesRegisterSelection](
+@Key VARCHAR(20),
+@Code VARCHar(100)=NULL,
+@FromDate VARCHAR(20)=NULL,
+@ToDate VARCHAR(20)=NULL,
+@Page BIGINT ,
+@PageSize  BIGINT,
+@Sort VARCHAR(40),
+@SortDir VARCHAR(5),
+@P_RECORD_COUNT BIGINT OUTPUT
+)
+AS
+	BEGIN	
+	--exec AH_SELLER_USER_SELECTION 'PAGE_LOAD','','','',1,10,'BillDt','ASC',1;	
+
+	DECLARE @FILTER_QUERY NVARCHAR(MAX)=
+		(
+			CASE @Key 
+				WHEN 'CODE' THEN 'WHERE  A.VNo like ''%' + @Code + '%'''
+				WHEN 'ALL' THEN 'WHERE  A.VNo like ''%' + @Code + '%''
+				AND ( CONVERT(datetime,( CONVERT(VARCHAR(10),
+				 (CONVERT(DATETIME,A.BillDt,103)),103)),103) 
+				 BETWEEN (CONVERT(DATETIME,'''+@FromDate+''',103))  
+				 AND (CONVERT(DATETIME,'''+@ToDate+''',103)))'
+				WHEN 'DATE' THEN 'WHERE ( CONVERT(datetime,( CONVERT(VARCHAR(10),
+				 (CONVERT(DATETIME,A.BillDt,103)),103)),103) 
+				 BETWEEN (CONVERT(DATETIME,'''+@FromDate+''',103))  
+				 AND (CONVERT(DATETIME,'''+@ToDate+''',103))) '				
+				ELSE ' '
+			END
+		);
+		--
+		DECLARE @BASIC_QUERY NVARCHAR(MAX)=
+				'SELECT * FROM 
+					 ( SELECT 
+						ROW_NUMBER() OVER(ORDER BY '+@Sort+' '+@SortDir+ ' ) AS SNO, 
+						Date,
+						VNo,
+						VType,
+						LName,
+						Parent,
+						SName,
+						AQty,
+						UOM,
+						DiscPerc,
+						Amt   
+					FROM Rep_SalesReg A '+ @FILTER_QUERY+' 
+				)B ';
+		 
+		DECLARE @INDEX_QUERY NVARCHAR(MAX)=' WHERE  (CAST(B.SNO AS bigint)  BETWEEN @START_INDEX AND  @END_INDEX )'		
+		DECLARE @RESULT NVARCHAR(MAX)=@BASIC_QUERY+@INDEX_QUERY;		
+		DECLARE @START_INDEX BIGINT=((@Page -1) * @PageSize + 1);
+		DECLARE @END_INDEX BIGINT=((((@Page -1) * @PageSize + 1) + @PageSize) - 1);
+
+		EXEC sp_executesql @RESULT, N'@START_INDEX BIGINT,@END_INDEX BIGINT', @START_INDEX,@END_INDEX
+
+		DECLARE @BASIC_QUERY_COUNT NVARCHAR(MAX)='';	
+		SET @BASIC_QUERY_COUNT='SELECT @cnt=count(*) from Rep_SalesReg A ';
+
+		DECLARE @RESULT_COUNT NVARCHAR(MAX)=@BASIC_QUERY_COUNT+@FILTER_QUERY;		
+		EXECUTE sp_executesql @RESULT_COUNT, N'@cnt BIGINT OUTPUT', @cnt=@P_RECORD_COUNT OUTPUT;
+	END;
+GO
+/****** Object:  StoredProcedure [dbo].[UserLoginSelection]    Script Date: 07-11-2017 23:34:12 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[UserLoginSelection]
+	(
+		@UserName varchar(100),
+		@Password varchar(100)
+	)
+AS
+BEGIN
+	SELECT 
+		UserName,
+		id as UserId,
+		Designation
+	FROM [dbo].[UserMaster] 
+	WHERE UserName=@UserName and Password =@Password and Active=1;
+END;
+GO
