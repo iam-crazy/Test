@@ -6,6 +6,7 @@ https://stackoverflow.com/questions/12362828/where-can-i-download-the-visual-stu
 https://support.microsoft.com/en-in/help/933137/fix-the-report-viewer-2005-service-pack-1-redistributable-package-is-a
 https://www.iris.co.uk/support/knowledgebase/kb/12000
 https://forums.asp.net/t/1237732.aspx?An+error+occurred+during+local+report+processing
+http://www.programering.com/a/MjN5YTMwATY.html
 
 
 
