@@ -1,6 +1,7 @@
 
 how to solve an error occurred during local report processing
 
+https://www.codeproject.com/Articles/1174685/Learn-Angular-step-by-step-for-Beginners-Lab
 https://serverfault.com/questions/465722/install-sql-clr-types-report-viewer-2012-on-sql-2008-server
 https://stackoverflow.com/questions/12362828/where-can-i-download-the-visual-studio-2012-report-viewer-runtime
 https://support.microsoft.com/en-in/help/933137/fix-the-report-viewer-2005-service-pack-1-redistributable-package-is-a
