@@ -1,6 +1,7 @@
 
 https://medium.com/frontend-coach/7-must-have-visual-studio-code-extensions-for-angular-af9c476147fd
 https://code.visualstudio.com/Docs/editor/debugging
+https://github.com/Microsoft/vscode-recipes/tree/master/Angular-CLI
 https://stackoverflow.com/questions/42495655/how-to-debug-angular-with-vscode
 how to solve an error occurred during local report processing
 
