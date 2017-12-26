@@ -1,4 +1,6 @@
 
+https://medium.com/frontend-coach/7-must-have-visual-studio-code-extensions-for-angular-af9c476147fd
+
 how to solve an error occurred during local report processing
 
 https://www.codeproject.com/Articles/1174685/Learn-Angular-step-by-step-for-Beginners-Lab
