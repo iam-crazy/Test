@@ -2,7 +2,7 @@ https://plnkr.co/edit/z1RhcK?p=preview
 https://plnkr.co/edit/z1RhcK?p=preview
 
 C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\CommonExtensions\Microsoft\TeamFoundation\Team Explorer
-
+C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE
 
 
 http://krispo.github.io/angular-nvd3/#/quickstart
