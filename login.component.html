@@ -1,0 +1,34 @@
+<form [formGroup]="validateForm" (ngSubmit)="onSubmit(validateForm.value)">
+    <div class="row login-container" style="background: url(../../../assets/images/background2.jpg); background-size: 100% 100%; border: 0px;">
+        <div class="col-lg-8 left-Content">
+            <img src="../../../assets/images/Technologies/Csharp2.png" style="min-height: 100%;">
+        </div>
+        <div class="col-lg-4 right-Content">
+            <div class="login-header" style="text-align: center; ">
+                <div class="brand" style="text-align: center;">
+                    <img src="#" style="height: 54px; width: 86px;">
+                </div>
+            </div>
+            <div class="login-content">
+                <h4 class="text-success" style="font-weight: bold;">SIGN IN</h4>
+                <hr style="margin-top: 10px;">
+                <div class="form-group">
+                    <label>User Name <sup style="color:red">*</sup> </label>
+                    <input ahHighlighter="userName" name="userName" type="text" formControlName="userName" maxlength="25" class="form-control" placeholder="Enter Email Id">
+                    <ahErrorProvider ahErrorProviderName="userName" [validate]="isSubmitted" name="user Name"></ahErrorProvider>
+                </div>
+                <div class="form-group">
+                    <label>Password<sup style="color:red">*</sup></label>
+                    <input ahHighlighter="password" type="password" minlength="5" name="password" maxlength="10" formControlName="password" class="form-control" placeholder="Enter Password">
+                    <ahErrorProvider ahErrorProviderName="password" [validate]="isSubmitted" name="Password"></ahErrorProvider>
+                    <span id="lblErrorMsg" style="color:Red;">{{validationError}}</span>
+                </div>
+                <button style="border-radius: 6px;" class="btn btn-success btn-block btn-lg">Sign In</button>
+                <hr>
+                <p class="text-center text-inverse">
+                    All rights reserved © Niralakkam 2016
+                </p>
+            </div>
+        </div>
+    </div>
+</form>
