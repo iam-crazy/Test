@@ -1,4 +1,18 @@
-I am very delighted to accept the offer.
+
+Microsoft .Net Framework?
+	Microsoft .Net Framework is a Software frameWork to create a software application(Web and Windows application) developed by Microsoft. Microsoft was provided the many class libraries(Like EntitiyFramework, SQL, Oracel, etc..) that class libraries are used to build different software application.
+	
+	In 2002, Microsoft was released the first .Net framework 1.0.In this framework have basic features and current version is 4.7.1.  
+	
+	Microsoft .Net Framework is support differeent programming language like c#, vb. 
+	
+.Net Framework Components:
+	.Net Framework Components are Common Language Runtime, Common Type System, Common Language 
+	
+
+
+
+am very delighted to accept the offer.
 My joining date will be 31-Aug-2018.
 My heartly thanks for DXC for inviting into their family.
 
