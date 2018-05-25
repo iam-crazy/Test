@@ -1,3 +1,8 @@
+I am very delighted to accept the offer.
+My joining date will be 31-Aug-2018.
+My heartly thanks for DXC for inviting into their family.
+
+
 Menu
 using System;
 using System.Collections.Generic;
