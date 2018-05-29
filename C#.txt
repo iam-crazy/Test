@@ -1,3 +1,17 @@
+{
+        path: 'Summary',
+        children: [
+          {
+            path: '',
+            component: SummaryComponent
+          },
+          {
+            path: ':key',
+            component: SummaryComponent
+          }
+        ]
+      }
+
 
 Microsoft .Net Framework?
 	Microsoft .Net Framework is a Software frameWork to create a software application(Web and Windows application) developed by Microsoft. Microsoft was provided the many class libraries(Like EntitiyFramework, SQL, Oracel, etc..) that class libraries are used to build different software application.
