@@ -3,6 +3,16 @@
         <h3 class="first">CSS</h3>
         <pre><code highlight [code]="code" ></code></pre>
     </div>
+https://github.com/MurhafSousli/ngx-highlightjs
+
+
+import { HighlightResult } from 'ngx-highlightjs';
+
+  code = `function myFunction() {
+  document.getElementById("demo1").innerHTML = "Hello there!";
+  document.getElementById("demo2").innerHTML = "How are you?";
+}`;
+
 
 
 {
