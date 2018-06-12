@@ -6,7 +6,15 @@
 .content-header{
 width: 100%;
 }
-
+body {
+    overflow-x: hidden;
+    background-color: #fff;
+    color: #34495f;
+    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+    line-height: 27px;
+    text-align: justify;
+    font-size: 100%;
+}
 https://www.counter12.com/
 
 
