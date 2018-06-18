@@ -1,3 +1,221 @@
+<div class="wrapper">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="page-title-box">
+                    <div class="btn-group pull-right">
+                        <ol class="breadcrumb hide-phone p-0 m-0">
+                            <li class="breadcrumb-item">
+                                <a>Home</a>
+                            </li>
+                            <li class="breadcrumb-item active">Content Create</li>
+                        </ol>
+                    </div>
+                    <h4 class="page-title">CONTENT CREATE</h4>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card m-b-20">
+                    <form [formGroup]="contentFrom" (ngSubmit)="onContentSubmit(contentFrom.value)">
+                        <div class="card-header">
+                            <div class="btn-group pull-right">
+                                <button style="padding: 2px;font-size: 12px;" class="btn btn-success btn-xs" type="submit">Create</button>
+                            </div>
+                            CONTENT CREATION
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="col-lg-12">
+                                        <div class="form-group row">
+                                            <label class="col-md-3 col-form-label">Menu</label>
+                                            <div class="col-md-9 ">
+                                                <p-dropdown ahHighlighter="menu" [(ngModel)]="selectedMenu" formControlName="menu" [options]="menus" [showClear]="true" [autoDisplayFirst]="false" name="type" optionLabel="name" [style]="{'width':'100%'}"></p-dropdown>
+                                                <ahErrorProvider ahErrorProviderName="menu" [validate]="isSubmitted" name="Header Title"></ahErrorProvider>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group row">
+                                            <label class="col-md-3 col-form-label">Title</label>
+                                            <div class="col-md-9">
+                                                <input ahHighlighter="title" formControlName="title" class="form-control" type="text">
+                                                <ahErrorProvider ahErrorProviderName="title" [validate]="isSubmitted" name="Header Title"></ahErrorProvider>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group row">
+                                            <label class="col-md-3 col-form-label">GitHub Link</label>
+                                            <div class="col-md-9">
+                                                <input formControlName="gitHubLink" class="form-control" type="text">
+                                                <div style="min-height:25px;max-height:25px;"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group row">
+                                            <label class="col-md-3 col-form-label">YouTube Link</label>
+                                            <div class="col-md-9">
+                                                <input formControlName="youTubeLink" class="form-control" type="text">
+                                                <div style="min-height:25px;max-height:25px;"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group row">
+                                            <label class="col-md-3 col-form-label">Status</label>
+                                            <div class="col-md-9">
+                                                <p-toggleButton formControlName="status" onLabel="Active" name="status" offLabel="Inactive" onIcon="fa-thumbs-up" offIcon="fa-thumbs-down"></p-toggleButton>
+                                                <div style="min-height:25px;max-height:25px;"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group row">
+                                            <label class="col-md-3 col-form-label">Content</label>
+                                            <div class="col-md-9">
+                                                <textarea ahHighlighter="content" formControlName="content" class="form-control" rows="3"></textarea>
+                                                <ahErrorProvider ahErrorProviderName="content" [validate]="isSubmitted" name="Header Title"></ahErrorProvider>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <div class="form-group row">
+                                            <label class="col-md-3 col-form-label">Written By</label>
+                                            <div class="col-md-9 ">
+                                                <p-dropdown [options]="writterNames" [showClear]="true" [autoDisplayFirst]="false" name="type" formControlName="writterName" optionLabel="name" [style]="{'width':'100%'}"></p-dropdown>
+                                                <ahErrorProvider ahErrorProviderName="writterName" [validate]="isSubmitted" name="writterName"></ahErrorProvider>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <p-dataTable [scrollable]="true" [draggable]="false" [responsive]="true" scrollHeight="400px" [value]="contentDetil.subContents" selectionMode="single" [style]="{'border':'1px solid #D5D5D5'}">
+                                        <p-column field="index" [style]="{'width':'60px'}" header="Index"></p-column>
+                                        <p-column field="subContentTitle" header="Title"></p-column>
+                                        <p-column field="subContentStatus" [style]="{'width':'60px'}" header="Status"></p-column>
+                                        <p-column styleClass="col-button" [style]="{'width':'100px'}" header="Action">
+                                            <ng-template let-subContent="rowData" pTemplate="body">
+                                                <button type="button" style="width:100%;" pButton (click)="editSubContent(subContent)" icon="fa-edit"></button>
+                                            </ng-template>
+                                        </p-column>
+                                        <p-column styleClass="col-button" [style]="{'width':'45px'}">
+                                            <ng-template let-subContent="rowData" pTemplate="body">
+                                                <button type="button" pButton (click)="upSubContent(subContent)" icon="fa fa-arrow-up"></button>
+                                            </ng-template>
+                                        </p-column>
+                                        <p-column styleClass="col-button" [style]="{'width':'45px'}">
+                                            <ng-template let-subContent="rowData" pTemplate="body">
+                                                <button type="button" pButton (click)="downSubContent(subContent)" icon="fa fa-arrow-down"></button>
+                                            </ng-template>
+                                        </p-column>
+                                        <p-header>
+                                            <div class="ui-helper-clearfix">
+                                                <h4 style="float:left;margin-bottom: 0;    line-height: 1.445;">SUB-CONTENT CREATION</h4>
+                                                <button type="button" pButton icon="fa fa-plus" iconPos="left" label="Create" (click)="showDialog()" style="float:right"></button>
+                                            </div>
+                                        </p-header>
+                                    </p-dataTable>
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+                    <p-dialog [(visible)]="display" [draggable]="false" [baseZIndex]="10000" header="Sub-Content Details" [responsive]="true" showEffect="fade" [modal]="true" [contentStyle]="{'max-height':'350px','max-width':'1000px'}">
+                        <form [formGroup]="subContentFrom" (ngSubmit)="onSubContentSubmit(subContentFrom.value)">
+                            <div style="padding-left: 15px;padding-right: 15px;" class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group row">
+                                        <label class="col-md-4 col-form-label" style="padding-left: 0px;">Header</label>
+                                        <div class="col-md-8">
+                                            <input ahHighlighter="subContentTitle" [validate]="isSubContentSubmitted" formControlName="subContentTitle" class="form-control" type="text">
+                                            <div style="min-height:25px;max-height:25px;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group row">
+                                        <label class="col-md-4 col-form-label" style="padding-left: 0px;">Status</label>
+                                        <div class="col-md-8">
+                                            <p-toggleButton formControlName="subContentStatus" onLabel="YES" offLabel="NO" onIcon="fa-thumbs-up" offIcon="fa-thumbs-down"></p-toggleButton>
+                                            <div style="min-height:25px;max-height:25px;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group row">
+                                        <label class="col-md-4 col-form-label" style="padding-left: 0px;">Image Url</label>
+                                        <div class="col-md-8">
+                                            <input formControlName="subContentImageUrl" class="form-control" type="text">
+                                            <div style="min-height:25px;max-height:25px;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group row">
+                                        <label class="col-md-4 col-form-label" style="padding-left: 0px;">Image Alignment</label>
+                                        <div class="col-md-8">
+                                            <p-selectButton formControlName="subContentImageAlignMent" [options]="imageAlignMents"></p-selectButton>
+                                            <div style="min-height:25px;max-height:25px;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group row">
+                                        <label class="col-md-4 col-form-label" style="padding-left: 0px;">Content</label>
+                                        <div class="col-md-8">
+                                            <textarea formControlName="subContent" class="form-control" rows="2"></textarea>
+                                            <div style="min-height:25px;max-height:25px;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group row">
+                                        <label class="col-md-4 col-form-label" style="padding-left: 0px;">Coding</label>
+                                        <div class="col-md-8">
+                                            <textarea formControlName="subContentCoding" class="form-control" rows="2"></textarea>
+                                            <div style="min-height:25px;max-height:25px;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <div class="form-group row">
+                                        <label class="col-md-4 col-form-label" style="padding-left: 0px;">link</label>
+                                        <div class="col-md-8">
+                                            <input formControlName="link" class="form-control" type="text">
+                                            <div style="min-height:25px;max-height:25px;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="form-group row">
+                                        <label class="col-md-4 col-form-label" style="padding-left: 0px;">Extra Content</label>
+                                        <div class="col-md-8">
+                                            <textarea formControlName="subContent2" class="form-control" rows="2"></textarea>
+                                            <div style="min-height:25px;max-height:25px;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="color: red;" class="col-lg-12">
+                                    {{subContentError}}
+                                </div>
+                                <div style="float: right;" class="col-lg-12">
+                                    <button class="col-lg-4 pull-right btn btn-success" style="margin-bottom: 12px;" type="submit">ADD</button>
+                                </div>
+                            </div>
+                        </form>
+                    </p-dialog>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 .ui-widget, .ui-widget * {
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
