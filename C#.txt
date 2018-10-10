@@ -2,6 +2,9 @@ Vue
 
 https://github.com/vuejs/awesome-vue
 
+angular sitemap
+https://www.c-sharpcorner.com/article/implementing-seo-rule-on-website-hosted-in-iis8/
+
 
 https://github.com/dahlsailrunner/FormAwesome
 
